@@ -10,7 +10,7 @@ module.exports = {
   devServer: {
     hot: false
   },
-  module: {
+   module: {
     rules: [
         {
           test: /\.js$/,

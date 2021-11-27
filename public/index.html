@@ -12,18 +12,18 @@
 
 <body class="page-body">
   <header class="page-header">
-    <div class="page-body__container  page-header__container">
+    <div class="page-body__container  page-header__container" data-view="control">
       <img class="page-header__logo" src="img/logo.png" width="42" height="42" alt="Trip logo">
 
       <div class="trip-main">
         <div class="trip-main__trip-controls  trip-controls">
           <div class="trip-controls__navigation">
-            <h2 class="visually-hidden" data-container="menu">Switch trip view</h2>
+            <h2 class="visually-hidden" data-view="control">Switch trip view</h2>
             <!-- Меню -->
           </div>
 
           <div class="trip-controls__filters">
-            <h2 class="visually-hidden" data-container="filter">Filter events</h2>
+            <h2 class="visually-hidden" data-view="filter">Filter events</h2>
             <!-- Фильтры -->
           </div>
         </div>
@@ -32,10 +32,12 @@
       </div>
     </div>
   </header>
+
+
   <main class="page-body__page-main  page-main">
     <div class="page-body__container">
       <section class="trip-events">
-        <h2 class="visually-hidden" data-container="sort">Trip events</h2>
+        <h2 class="visually-hidden" data-view="main">Trip events</h2>
 
 
         <!-- Сортировка -->
@@ -44,7 +46,7 @@
       </section>
     </div>
   </main>
-  <script src="./bundle.js"></script>
+  <script type="module" src="./bundle.js"></script>
 </body>
 
 </html>
