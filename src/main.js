@@ -6,7 +6,6 @@ import {createCoverConternTemplate} from './view/cover-content-view.js';
 import {createEventTemplate} from './view/event-view.js';
 import {createNewEventTemplate} from './view/new-event-view.js';
 
-
 import {renderTemplate, RenderPosition} from './render.js';
 
 const tripMainElement = document.querySelector('.trip-main');
@@ -14,7 +13,6 @@ const controlElement = document.querySelector('[data-view="control"]');
 const filterElement = document.querySelector('[data-view="filter"]');
 const sortHeaderElement = document.querySelector('[data-view="main"]');
 const mainElement = document.querySelector('.trip-events');
-
 
 renderTemplate(tripMainElement, createInfoTemplate(), RenderPosition.AFTERBEGIN);
 renderTemplate(controlElement, createContolTemplate(), RenderPosition.AFTEREND);
