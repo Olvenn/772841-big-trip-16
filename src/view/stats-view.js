@@ -1,6 +1,4 @@
-import {createElement} from '../render.js';
-
-const createStatsTemplate = () => (
+export const createStatsTemplate = () => (
   `<section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
           <!-- Пример диаграмм -->
@@ -19,23 +17,3 @@ const createStatsTemplate = () => (
           </div>
         </section>`
 );
-
-export default class StatsView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  get template() {
-    return createStatsTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
-}
