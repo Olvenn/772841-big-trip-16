@@ -1,4 +1,5 @@
 import {firstToUpperCase} from '../moki/utils.js';
+import {createElement} from '../render.js';
 
 const createSortItemTemplate = (sort, isChecked) => {
   const {name, disabled} = sort;
@@ -14,7 +15,7 @@ const createSortItemTemplate = (sort, isChecked) => {
   );
 };
 
-export const createSortTemplate = (sortItems) => {
+const createSortTemplate = (sortItems) => {
   const sortItemsTemplate = sortItems
     .map((sort, index) => createSortItemTemplate(sort, index === 0))
     .join('');
@@ -23,3 +24,28 @@ export const createSortTemplate = (sortItems) => {
     ${sortItemsTemplate}
     </form>`;
 };
+
+export default class SortrView {
+  #element = null;
+  #sorts = null;
+
+  constructor(sorts) {
+    this.#sorts = sorts;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createSortTemplate(this.#sorts);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

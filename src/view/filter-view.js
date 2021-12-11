@@ -1,5 +1,6 @@
 import {FilterType} from '../consts.js';
 import {firstToUpperCase} from '../moki/utils.js';
+import {createElement} from '../render.js';
 
 const createFilterTemplate = (filter) => (
   `<div class="trip-filters__filter">
@@ -8,7 +9,7 @@ const createFilterTemplate = (filter) => (
                 </div>`
 );
 
-export const createFiltersTemplate = () => (
+const createFiltersTemplate = () => (
   `<form class="trip-filters" action="#" method="get">
                 ${Object.values(FilterType).map((it) => createFilterTemplate(it)).join('\n')}
 
@@ -16,3 +17,23 @@ export const createFiltersTemplate = () => (
               </form>`
 );
 
+export default class FilterView {
+  #element = null;
+  #filters = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFiltersTemplate(this.#filters);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
