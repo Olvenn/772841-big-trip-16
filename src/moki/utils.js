@@ -31,10 +31,10 @@ export const nowDay = () => (dayjs());
 
 export const generateEventDates = () => {
 
-  const maxDaysGap = 3;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap - 1);
-  const startDate = getRandomInteger(-maxDaysGap, daysGap);
-  const finishDate = getRandomInteger(daysGap, maxDaysGap);
+  const MAXDAYSGAP = 3;
+  const daysGap = getRandomInteger(-MAXDAYSGAP, MAXDAYSGAP - 1);
+  const startDate = getRandomInteger(-MAXDAYSGAP, daysGap);
+  const finishDate = getRandomInteger(daysGap, MAXDAYSGAP);
   return [dayjs().add(startDate, 'day').toDate(), dayjs().add(finishDate, 'day').toDate(), finishDate - startDate];
 };
 
@@ -44,18 +44,18 @@ export const humanizeEventTime = (date) => dayjs(date).format('hh:mm');
 export const humanizeEventDay = (date) => dayjs(date).format('D');
 
 export const startFinishDays = () => {
-  const maxDaysGap = 7;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap - 1);
+  const MAXDAYSGAP1 = 7;
+  const daysGap = getRandomInteger(-MAXDAYSGAP1, MAXDAYSGAP1 - 1);
 
-  const startDate = getRandomInteger(-maxDaysGap, daysGap);
-  const finishDate = getRandomInteger(daysGap, maxDaysGap);
+  const startDate = getRandomInteger(-MAXDAYSGAP1, daysGap);
+  const finishDate = getRandomInteger(daysGap, MAXDAYSGAP1);
   return `${humanizeEventData(dayjs().add(startDate, 'day').toDate())}&nbsp;&mdash;&nbsp;${humanizeEventData(dayjs().add(finishDate, 'day').toDate())}`;
 };
 
 export const generateDayTimeDate = () => {
 
-  const maxDaysGap = 7;
-  const daysGap = getRandomInteger(0, maxDaysGap);
+  const MAXDAYSGAP2 = 7;
+  const daysGap = getRandomInteger(0, MAXDAYSGAP2);
   const DAY_START = dayjs().add(daysGap, 'day').toDate();
 
   const maxTimeGapStart = 960;
@@ -121,8 +121,8 @@ export const generateDedlineDate = () => {
     return null;
   }
 
-  const maxDaysGap = 7;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
+  const MAXDAYSGAP3 = 7;
+  const daysGap = getRandomInteger(-MAXDAYSGAP3, MAXDAYSGAP3);
 
   return dayjs().add(daysGap, 'day').toDate();
 };

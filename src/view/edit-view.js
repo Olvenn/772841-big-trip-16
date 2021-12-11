@@ -1,6 +1,7 @@
 import {EventTypes, NAME_PLACES} from '../consts.js';
 import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 import {generateDescription, descriptionsArray} from '../moki/moki.js';
+import {createElement} from '../render.js';
 
 const createTypeTemplate = (typeName, typesEvent) => (
   `<div class="event__type-item">
@@ -32,7 +33,9 @@ const createOfferTemplate = (offer) => {
 export const createEditTemplate = (event) => {
   const {offers, typeEvent, destination, basePrice, dateFrom, dateTo} = event;
 
-  return `<header class="event__header">
+  return `<li class="trip-events__item">
+              <form class="event event--edit" action="#" method="post">
+                <header class="event__header">
                     <div class="event__type-wrapper">
                       <label class="event__type  event__type-btn" for="event-type-toggle-1">
                         <span class="visually-hidden">Choose event type</span>
@@ -54,6 +57,7 @@ export const createEditTemplate = (event) => {
                       </label>
                       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=" ${destination}" list="destination-list-1">
                       <datalist id="destination-list-1">
+                                     fjeq[g qghrgwkg]
                         ${NAME_PLACES.map((it) => createDestinationTemplate(it)).join('\n')}
                       </datalist>
                     </div>
@@ -86,6 +90,7 @@ export const createEditTemplate = (event) => {
 
                       <div class="event__available-offers">
 
+
                       ${offers.map((it) => createOfferTemplate(it)).join('\n')}
 
                       </div>
@@ -95,5 +100,32 @@ export const createEditTemplate = (event) => {
                       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                       <p class="event__destination-description">${generateDescription(descriptionsArray)}</p>
                     </section>
-                  </section>`;
+                  </section>
+                </form>
+            </li>`;
 };
+
+export default class EditView {
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEditTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
