@@ -1,3 +1,4 @@
+import {createElement} from '../render.js';
 import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 
 const createEventOfferTemplate = (offer) => {
@@ -10,7 +11,7 @@ const createEventOfferTemplate = (offer) => {
                        </li>`;
 };
 
-export const createEventTemplate = (event) => {
+const createEventTemplate = (event) => {
   const {offers, typeEvent, destination, basePrice, dateFrom, dateTo, duration, isFavorite} = event;
 
   const favoriteClassName = isFavorite
@@ -55,3 +56,30 @@ export const createEventTemplate = (event) => {
       </div>
   </li>`;
 };
+
+
+export default class PointView {
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEventTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
