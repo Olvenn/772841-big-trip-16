@@ -1,5 +1,8 @@
-import {getRandomInteger, generateDayTimeDate, getArrayFromArray, getElement, humanizeEventData} from './utils.js';
+import {generateDayTimeDate, getArrayFromArray, getElement, humanizeEventData} from './utils.js';
 import {offers, EventTypes, NAME_PLACES} from '../consts.js';
+import {getRandomInteger} from '../utils/common.js';
+
+
 const TEMPORARY = {
   idTemp: 10000000000,
   integerPrice1: 100,

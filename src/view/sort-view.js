@@ -1,5 +1,5 @@
 import {firstToUpperCase} from '../moki/utils.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createSortItemTemplate = (sort, isChecked) => {
   const {name, disabled} = sort;
@@ -20,32 +20,22 @@ const createSortTemplate = (sortItems) => {
     .map((sort, index) => createSortItemTemplate(sort, index === 0))
     .join('');
 
-  return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  return `<h2 class="visually-hidden">Trip events</h2>
+  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     ${sortItemsTemplate}
     </form>`;
 };
 
-export default class SortrView {
+export default class SortView extends AbstractView {
   #element = null;
   #sorts = null;
 
   constructor(sorts) {
+    super();
     this.#sorts = sorts;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createSortTemplate(this.#sorts);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

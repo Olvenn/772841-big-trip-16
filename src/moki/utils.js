@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {getRandomInteger} from '../utils/common.js';
 dayjs.extend(duration);
 
 export const NAME_PLACES = [
@@ -9,13 +10,6 @@ export const NAME_PLACES = [
   'Rome',
   'Rio de Janeiro',
 ];
-
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
 
 const addZeroToNumber = (number) => (number < 10) ? `0${number}` : number;
 

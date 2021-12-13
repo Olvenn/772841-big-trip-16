@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createContolTemplate = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -7,22 +7,10 @@ const createContolTemplate = () => (
                 </nav>`
 );
 
-export default class ContolView {
+export default class ContolView extends AbstractView {
   #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
 
   get template() {
     return createContolTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

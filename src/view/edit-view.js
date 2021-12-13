@@ -1,7 +1,7 @@
 import {EventTypes, NAME_PLACES} from '../consts.js';
 import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 import {generateDescription, descriptionsArray} from '../moki/moki.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createTypeTemplate = (typeName, typesEvent) => (
   `<div class="event__type-item">
@@ -105,27 +105,26 @@ export const createEditTemplate = (event) => {
             </li>`;
 };
 
-export default class EditView {
+export default class EditView extends AbstractView {
   #element = null;
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createEditTemplate(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 }
