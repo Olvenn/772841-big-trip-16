@@ -1,27 +1,14 @@
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
-const createCoverContentTemplate = () => (
+const createCoverPointsTemplate = () => (
   `<ul class="trip-events__list">
   </ul>`
 );
 
-
-export default class CoverContentView {
+export default class CoverPointsView extends AbstractView {
   #element = null;
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
   get template() {
-    return createCoverContentTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
+    return createCoverPointsTemplate();
   }
 }

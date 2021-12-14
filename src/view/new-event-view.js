@@ -1,7 +1,7 @@
 import {offers, EventTypes, NAME_PLACES, NAME_PHOTOS} from '../consts.js';
 import {firstToUpperCase, getRandomInteger, humanizeEventNew} from '../moki/utils.js';
 import {generateDescription, descriptionsArray} from '../moki/moki.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 const createTypeTemplate = (typeName, typesEvent) => (
   `<div class="event__type-item">
@@ -118,22 +118,10 @@ const createNewEventTemplate = () => {
   </form>`;
 };
 
-export default class NewPointView {
+export default class NewPointView extends AbstractView {
   #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
 
   get template() {
     return createNewEventTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

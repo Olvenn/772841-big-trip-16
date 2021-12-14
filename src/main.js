@@ -4,68 +4,72 @@ import {generateEvent} from './moki/moki.js';
 import InfoView from './view/info-view.js';
 import ContolView from './view/control-view.js';
 import FilterView from './view/filter-view.js';
-import SortrView from './view/sort-view.js';
-import CoverContentView from './view/cover-content-view.js';
-import PointView from './view/event-view.js';
+import SortView from './view/sort-view.js';
+import CoverPointsView from './view/cover-points-view.js';
+import PointView from './view/point-view.js';
 import EditView from './view/edit-view';
 import EmptyView from './view/empty-view';
 
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition, replace} from './utils/render.js';
 
 const tripMainElement = document.querySelector('.trip-main');
 const controlElement = document.querySelector('[data-view="control"]');
 const filterElement = document.querySelector('[data-view="filter"]');
-const sortHeaderElement = document.querySelector('[data-view="main"]');
 const mainElement = document.querySelector('.trip-events');
-const coverContentComponent = new CoverContentView();
 
 const points = Array.from({length: EVENT_COUNT}, generateEvent);
 
-render(tripMainElement, new InfoView().element, RenderPosition.AFTERBEGIN);
-render(controlElement, new ContolView().element, RenderPosition.AFTEREND);
-render(filterElement, new FilterView().element, RenderPosition.AFTEREND);
-render(mainElement, coverContentComponent.element, RenderPosition.BEFOREEND);
-render(sortHeaderElement, new SortrView(SortType).element, RenderPosition.AFTEREND);
+render(tripMainElement, new InfoView(), RenderPosition.AFTERBEGIN);
+render(controlElement, new ContolView(), RenderPosition.AFTEREND);
+render(filterElement, new FilterView(), RenderPosition.AFTEREND);
 
-const renderPoint = (pointListElement, point) => {
+const renderTrip = (tripContainer, allPoints) => {
+  const coverPointsComponent = new CoverPointsView();
 
-  const pointComponent = new PointView(point);
-  const pointEditComponent = new EditView(point);
+  render(tripContainer, coverPointsComponent, RenderPosition.BEFOREEND);
+  render(tripContainer, new SortView(SortType), RenderPosition.AFTERBEGIN);
 
+  const renderPoint = (pointListElement, point) => {
+    const pointComponent = new PointView(point);
+    const pointEditComponent = new EditView(point);
 
-  const replaceCardToForm = () => {
-    pointListElement.element.replaceChild(pointEditComponent.element, pointComponent.element);
-  };
+    const replaceCardToForm = () => {
+      replace(pointEditComponent, pointComponent);
+    };
 
-  const replaceFormToCard = () => {
-    pointListElement.element.replaceChild(pointComponent.element, pointEditComponent.element);
-  };
+    const replaceFormToCard = () => {
+      replace(pointComponent, pointEditComponent);
+    };
 
-  const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    pointComponent.setEditClickHandler(() => {
+      replaceCardToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    pointEditComponent.setFormSubmitHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
-    }
+    });
+
+    render(pointListElement, pointComponent, RenderPosition.BEFOREEND);
   };
 
-  pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-    replaceCardToForm();
-  });
-
-  pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    replaceFormToCard();
-    document.addEventListener('keydown', onEscKeyDown);
-  });
-
-  render(coverContentComponent.element, pointComponent.element, RenderPosition.BEFOREEND);
+  if (allPoints.length === 0) {
+    render(coverPointsComponent, new EmptyView(), RenderPosition.BEFOREEND);
+  } else {
+    for (let i = 0; i < EVENT_COUNT; i++) {
+      renderPoint(coverPointsComponent, allPoints[i]);
+    }
+  }
 };
 
-if (points.length === 0) {
-  render(coverContentComponent.element, new EmptyView().element, RenderPosition.BEFOREEND);
-} else {
-  for (let i = 0; i < EVENT_COUNT; i++) {
-    renderPoint(coverContentComponent, points[i]);
-  }
-}
+renderTrip(mainElement, points);
+

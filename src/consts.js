@@ -1,4 +1,4 @@
-export const EVENT_COUNT = 3;
+export const EVENT_COUNT = 4;
 
 export const typePoint = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 

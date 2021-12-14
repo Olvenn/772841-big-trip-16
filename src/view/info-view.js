@@ -1,6 +1,7 @@
 import {NAME_PLACES} from '../consts.js';
-import {getArrayWithDots, startFinishDays, getRandomInteger} from '../moki/utils.js';
-import {createElement} from '../render.js';
+import {getArrayWithDots, startFinishDays} from '../moki/utils.js';
+import {getRandomInteger} from '../utils/common.js';
+import AbstractView from './abstract-view.js';
 
 const getTripInfoTitle = getArrayWithDots(NAME_PLACES).join(' &mdash; ');
 
@@ -18,22 +19,9 @@ const createInfoTemplate = () => (
   </section>`
 );
 
-export default class InfoView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
+export default class InfoView extends AbstractView {
 
   get template() {
     return createInfoTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
