@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view.js';
-import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
+import {humanizeEventData, firstToUpperCase, humanizeEventTime, humanizeEventDuration} from '../moki/utils.js';
 
 const createEventOfferTemplate = (offer) => {
   const {name, price} = offer;
@@ -31,7 +31,7 @@ const createEventTemplate = (point) => {
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${duration}</p>
+          <p class="event__duration">${humanizeEventDuration(duration)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -57,7 +57,6 @@ const createEventTemplate = (point) => {
   </li>`;
 };
 
-
 export default class PointView extends AbstractView {
   #element = null;
   #point = null;
@@ -80,6 +79,14 @@ export default class PointView extends AbstractView {
     evt.preventDefault();
     this._callback.editClick();
   }
+
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  }
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
 }
-
-

@@ -37,6 +37,16 @@ export const humanizeEventData = (date) => dayjs(date).format('MMM D');
 export const humanizeEventTime = (date) => dayjs(date).format('hh:mm');
 export const humanizeEventDay = (date) => dayjs(date).format('D');
 
+export const humanizeEventDuration = (date) => {
+  const days = date.days() > 0 ? `${addZeroToNumber(date.days())} D` : '';
+  const hours = date.hours() > 0 ? `${addZeroToNumber(date.hours())} H` : '00H';
+  const minutes = date.minutes() > 0 ? `${addZeroToNumber(date.minutes())} M` : '00M';
+
+  const TIME__DURATION = `${days} ${hours} ${minutes}`;
+
+  return TIME__DURATION;
+};
+
 export const startFinishDays = () => {
   const MAXDAYSGAP1 = 7;
   const daysGap = getRandomInteger(-MAXDAYSGAP1, MAXDAYSGAP1 - 1);
@@ -63,14 +73,15 @@ export const generateDayTimeDate = () => {
 
   const timeDurationMs = dayjs.duration(TIME_END - TIME_START);
 
-  const days = timeDurationMs.days() > 0 ? `${addZeroToNumber(timeDurationMs.days())} D` : '';
-  const hours = timeDurationMs.hours() > 0 ? `${addZeroToNumber(timeDurationMs.hours())} H` : '00H';
-  const minutes = timeDurationMs.minutes() > 0 ? `${addZeroToNumber(timeDurationMs.minutes())} M` : '00M';
+  // const days = timeDurationMs.days() > 0 ? `${addZeroToNumber(timeDurationMs.days())} D` : '';
+  // const hours = timeDurationMs.hours() > 0 ? `${addZeroToNumber(timeDurationMs.hours())} H` : '00H';
+  // const minutes = timeDurationMs.minutes() > 0 ? `${addZeroToNumber(timeDurationMs.minutes())} M` : '00M';
 
-  const TIME__DURATION = `${days} ${hours} ${minutes}`;
+  // const TIME__DURATION = `${days} ${hours} ${minutes}`;
 
-  return [DAY_START, TIME_START, TIME_END, TIME__DURATION];
+  return [DAY_START, TIME_START, TIME_END, timeDurationMs];
 };
+
 
 export const getElementsFromArrayOrNull = (arrayAll) => {
   let elements = [];
@@ -119,4 +130,19 @@ export const generateDedlineDate = () => {
   const daysGap = getRandomInteger(-MAXDAYSGAP3, MAXDAYSGAP3);
 
   return dayjs().add(daysGap, 'day').toDate();
+};
+
+
+export const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
 };

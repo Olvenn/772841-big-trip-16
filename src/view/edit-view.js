@@ -72,11 +72,12 @@ export const createEditTemplate = (event) => {
 
                     <div class="event__field-group  event__field-group--price">
                       <label class="event__label" for="event-price-1">
-                        <span class="visually-hidden">${basePrice}</span>
+                        <span class="visually-hidden">Price</span>
                         &euro;
                       </label>
-                      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+                      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
                     </div>
+
 
                     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                     <button class="event__reset-btn" type="reset">Delete</button>
@@ -125,6 +126,6 @@ export default class EditView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this.#point);
   }
 }

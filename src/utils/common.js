@@ -4,3 +4,7 @@ export const getRandomInteger = (a = 0, b = 1) => {
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
+
+export const sortByPrice = (a, b) => (b.basePrice - a.basePrice);
+
+export const sortByDuration = (a, b) => (b.duration.$ms - a.duration.$ms);
