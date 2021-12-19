@@ -1,10 +1,9 @@
 import {generateDayTimeDate, getArrayFromArray, getElement, humanizeEventData} from './utils.js';
 import {offers, EventTypes, NAME_PLACES} from '../consts.js';
 import {getRandomInteger} from '../utils/common.js';
-
+import {nanoid} from 'nanoid';
 
 const TEMPORARY = {
-  idTemp: 10000000000,
   integerPrice1: 100,
   integerPrice2: 5000,
 };
@@ -32,7 +31,7 @@ export const generatePlace = () => ({
 });
 
 export const generateEvent = () => ({
-  id: parseInt((Math.random() * TEMPORARY.idTemp), 10),
+  id: nanoid(),
   eventDate: humanizeEventData()[0],
   dateFrom: generateDayTimeDate()[1],
   dateTo: generateDayTimeDate()[2],

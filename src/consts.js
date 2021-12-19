@@ -35,12 +35,20 @@ export const MenuItem = {
   STATS: 'Stats'
 };
 
-export const SortType = [
-  {name: 'day', disabled: false},
-  {name: 'event', disabled: true},
-  {name: 'time', disabled: false},
-  {name: 'price', disabled: false},
-  {name: 'offer', disabled: true},
+export const SortType = {
+  DAY: 'DAY',
+  EVENT: 'EVENT',
+  TIME: 'TIME',
+  PRICE: 'PRICE',
+  OFFER: 'OFFER'
+};
+
+export const SortSetting = [
+  {name: 'day', dataSortType: 'DAY', disabled: false},
+  {name: 'event', dataSortType: 'EVENT', disabled: true},
+  {name: 'time', dataSortType: 'TIME', disabled: false},
+  {name: 'price', dataSortType: 'PRICE', disabled: false},
+  {name: 'offer', dataSortType: 'OFFER', disabled: true},
 ];
 
 export const FilterType = {
