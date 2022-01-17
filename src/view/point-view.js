@@ -1,18 +1,29 @@
 import AbstractView from './abstract-view.js';
-import {humanizeEventData, firstToUpperCase, humanizeEventTime, humanizeEventDuration} from '../moki/utils.js';
+import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
+import dayjs from 'dayjs';
+import he from 'he';
 
-const createEventOfferTemplate = (offer) => {
-  const {name, price} = offer;
-
-  return `<li class="event__offer">
-                        <span class="event__offer-title">${name}</span>
+const createEventOfferTemplate = (offer) => (
+  `<li class="event__offer">
+                        <span class="event__offer-title">${offer.title}</span>
                         &plus;
-                        &euro;&nbsp;<span class="event__offer-price">${price}</span>
-                       </li>`;
-};
+                        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+                       </li>`
+);
 
 const createEventTemplate = (point) => {
-  const {offers, typeEvent, destination, basePrice, dateFrom, dateTo, duration, isFavorite} = point;
+  const {offers, typeEvent, destination, basePrice, dateFrom, dateTo, isFavorite} = point;
+
+  const startTime = dayjs(dateFrom);
+  const endTime = dayjs(dateTo);
+
+  const getTimeDifference = () => {
+    const timeDifference = endTime.diff(startTime, 'minutes');
+    const minutesDifference = timeDifference % 60 > 0 ? `${timeDifference % 60}M` : '';
+    const hoursDifference = Math.floor(timeDifference / 60) % 24 > 0 ? `${Math.floor(timeDifference / 60) % 24}H ` : '';
+    const daysDifference = Math.floor((timeDifference / 60) / 24) > 0 ? `${Math.floor((timeDifference / 60) / 24)}D ` : '';
+    return daysDifference + hoursDifference + minutesDifference;
+  };
 
   const favoriteClassName = isFavorite
     ? ' event__favorite-btn--active'
@@ -24,14 +35,14 @@ const createEventTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${typeEvent}.png" alt="${typeEvent} icon">
         </div>
-        <h3 class="event__title">${firstToUpperCase(typeEvent)} ${destination}</h3>
+        <h3 class="event__title">${firstToUpperCase(typeEvent)} ${he.encode(destination)}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T10:30">${humanizeEventTime(dateFrom)}</time>
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${humanizeEventDuration(duration)}</p>
+          <p class="event__duration">${getTimeDifference()}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
