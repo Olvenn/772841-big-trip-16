@@ -17,11 +17,12 @@ const createStatsTemplate = () => (
           <div class="statistics__item">
             <canvas class="statistics__chart" id="time" width="900"></canvas>
           </div>
-        </section>`
+        </section>
+        `
 );
 
 export default class StatsView extends AbstractView {
-  #element = null;
+
 
   get template() {
     return createStatsTemplate();
