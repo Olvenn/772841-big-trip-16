@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
