@@ -1,5 +1,3 @@
-// import {FilterType} from '../consts.js';
-// import {firstToUpperCase} from '../moki/utils.js';
 import AbstractView from './abstract-view.js';
 
 

@@ -73,12 +73,6 @@ export const generateDayTimeDate = () => {
 
   const timeDurationMs = dayjs.duration(TIME_END - TIME_START);
 
-  // const days = timeDurationMs.days() > 0 ? `${addZeroToNumber(timeDurationMs.days())} D` : '';
-  // const hours = timeDurationMs.hours() > 0 ? `${addZeroToNumber(timeDurationMs.hours())} H` : '00H';
-  // const minutes = timeDurationMs.minutes() > 0 ? `${addZeroToNumber(timeDurationMs.minutes())} M` : '00M';
-
-  // const TIME__DURATION = `${days} ${hours} ${minutes}`;
-
   return [DAY_START, TIME_START, TIME_END, timeDurationMs];
 };
 
@@ -105,10 +99,7 @@ export const getArrayFromArray = (arrayAll) => {
 };
 
 export const getOffersArray = (arrayAll, eventTypesName, eventTypes) => {
-  // let elements = [];
   const offersType =  eventTypes.filter((eventType)  => eventType.name === eventTypesName);
-  console.log(offersType[0].offers);
-
 
   return offersType[0].offers;
 };
@@ -140,18 +131,3 @@ export const generateDedlineDate = () => {
 
   return dayjs().add(daysGap, 'day').toDate();
 };
-
-
-// export const updateItem = (items, update) => {
-//   const index = items.findIndex((item) => item.id === update.id);
-
-//   if (index === -1) {
-//     return items;
-//   }
-
-//   return [
-//     ...items.slice(0, index),
-//     update,
-//     ...items.slice(index + 1),
-//   ];
-// };

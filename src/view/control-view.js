@@ -9,7 +9,7 @@ const createContolTemplate = () => (
 );
 
 export default class ContolView extends AbstractView {
-  // #element = null;
+
   constructor() {
     super();
   }

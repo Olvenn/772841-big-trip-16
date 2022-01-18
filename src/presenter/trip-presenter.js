@@ -4,13 +4,11 @@ import {SortType} from '../consts.js';
 import SortView from '../view/sort-view.js';
 import CoverPointsView from '../view/cover-points-view.js';
 import EmptyView from '../view/empty-view';
-// import {updateItem} from '../moki/utils.js';
 import {UserAction, UpdateType, FilterType} from '../consts.js';
 import {filter} from '../utils/filter.js';
 
 
 import PointPresenter from './point-presenter.js';
-
 import NewPointPresenter from './new-point-presenter.js';
 
 export default class TripPresenter {

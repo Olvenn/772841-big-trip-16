@@ -22,7 +22,7 @@ const createStatsTemplate = () => (
 );
 
 export default class StatsView extends AbstractView {
-  // #element = null;
+
 
   get template() {
     return createStatsTemplate();

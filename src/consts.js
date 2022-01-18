@@ -37,8 +37,6 @@ export const offersNames = [
 ];
 
 export const EventTypesOffers = [
-  {type: 't', offers: [{id: 0, title: 'Add', price: 30, isChecked: false}]},
-
   {type: 'taxi', offers: [{id: 1, title: 'Add luggage', price: 30, isChecked: false}, {id: 2, title: 'Switch to comfort class', price: 100, isChecked: false}]},
   {type: 'bus', offers: [{id: 3, title: 'Add luggage', price: 30, isChecked: false}, {id: 4, title: 'Choose seats', price: 5}]},
   {type: 'train', offers: [{id: 5, title: 'Add luggage', price: 30, isChecked: false}, {id: 6, title: 'Switch to comfort class', price: 100, isChecked: false}, {id: 7, title: 'Add meal', price: 15, isChecked: false}, {id: 8, title: 'Travel by train', price: 40, isChecked: false}]},

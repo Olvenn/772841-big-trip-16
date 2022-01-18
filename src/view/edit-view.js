@@ -1,8 +1,7 @@
 
 import {EventTypes, NAME_PLACES, offersNames, EventTypesOffers} from '../consts.js';
-import {firstToUpperCase, humanizeEventTime, getOffersArray} from '../moki/utils.js';
-import {generateDescription, descriptionsArray, generatePlace} from '../moki/moki.js';
-import AbstractView from './abstract-view.js';
+import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
+import {generatePlace} from '../moki/moki.js';
 import SmartView from './smart-view.js';
 import {nanoid} from 'nanoid';
 import flatpickr from 'flatpickr';
@@ -152,7 +151,7 @@ export default class EditView extends SmartView {
 
   constructor(point = BLANK_POINT(EventTypesOffers)) {
     super();
-    // this.#point = point;
+
     this._data = EditView.parsePointToData(point);
 
     this.#setInnerHandlers();
@@ -224,9 +223,8 @@ export default class EditView extends SmartView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
     this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#onCityChange);
-    // this.element.querySelector('.event__input--destination').addEventListener('input', this.#onCityInput);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInput);
-    // this.element.querySelector('.event__offer-checkbox').addEventListener('change', this.#offerChangeHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
   }
 
   #onTypeChange = (evt) => {
@@ -253,59 +251,28 @@ export default class EditView extends SmartView {
     });
   };
 
-  // #onCityInput = (evt) => {
-  //   evt.preventDefault();
-  //   this.updateData({
-  //     destination: evt.target.value,
-  //   });
-  // };
-
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
-    const allOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox'));
-    const checkedOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
 
-    // let oldOffers =  this._data.offers;
-    // // oldOffers[1].isChecked = true;
-    // checkedOffers.forEach((it) => {
+    const idOffer = +evt.target.dataset.id;
 
 
-    // })
+    const oldOffers =  this._data.offers;
 
 
+    if (idOffer) {
+      oldOffers.forEach((it) => {
+        if (idOffer === it.id) {
+          it.isChecked = !(it.isChecked);
+        }
+      });
+    }
 
-    // const newOllers = oldOffers.pop();
+    this.updateData({
 
-
-
-//     const idOffers = checkedOffers.map((it) => Object.values(it.dataset));
-
-//     oldOffers.forEach((it) => {
-//       if (idOffers.indexOf(it.id)){
-//         // it.isChecked = !(it.isChecked);
-
-//         // it.isChecked = true;
-//       }
-
-//     });
-
-
-
-      //  console.log(Object.values(idOffers));
-
-    // checkedOffers.forEach((offer) => {
-
-
-    // })
-    // oldOffers.forEach((offer) => {
-
-
-    // })
-
-    // this.updateData({
-    //   offers: newOllers,
-    // });
-  };
+      offers: oldOffers,
+    });
+  }
 
 
   reset = (point) => {

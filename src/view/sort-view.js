@@ -1,5 +1,4 @@
 import AbstractView from './abstract-view.js';
-import {firstToUpperCase} from '../moki/utils.js';
 import { SortType } from '../consts.js';
 
 const createSortTemplate = (currentSortType) =>
@@ -34,7 +33,6 @@ const createSortTemplate = (currentSortType) =>
 
 
 export default class SortView extends AbstractView {
-  // #element = null;
 
   #currentSortType = null;
 

@@ -42,8 +42,6 @@ export default class PointPresenter {
 
     render(this.#tripContainer, this.#pointComponent, RenderPosition.BEFOREEND);
 
-    // document.addEventListener('keydown', this.#escKeyDownHandler);
-
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#tripContainer, this.#pointComponent, RenderPosition.BEFOREEND);
       return;

@@ -1,5 +1,5 @@
-import {generateDayTimeDate, getArrayFromArray, getElement, humanizeEventData} from './utils.js';
-import {offers, EventTypes, NAME_PLACES, EventTypesOffers} from '../consts.js';
+import {getElement, humanizeEventData} from './utils.js';
+import {EventTypes, NAME_PLACES, EventTypesOffers} from '../consts.js';
 import {getRandomInteger} from '../utils/common.js';
 import {nanoid} from 'nanoid';
 import dayjs from 'dayjs';
@@ -22,16 +22,12 @@ export const generateDescription = (descriptions) => {
   return description.substring(0, description.length - 1);
 };
 
-const countPhotos = 5;
-const photosName = Array.from(Array(countPhotos).keys());
-
 const photos = [{src: 'img/photos/1.jpg', description: 'Event photo 1'},
   {src: 'img/photos/2.jpg', description: 'Event photo 2'},
   {src: 'img/photos/3.jpg', description: 'Event photo 3'},
   {src: 'img/photos/4.jpg', description: 'Event photo 4'},
   {src: 'img/photos/5.jpg', description: 'Event photo 5'},
 ];
-
 
 export const generatePlace = () => ({
   name: NAME_PLACES[getRandomInteger(0, NAME_PLACES.length - 1)],
@@ -40,11 +36,9 @@ export const generatePlace = () => ({
 
 });
 
-
 const MAX_MINUTES_GAP = 2880;
 
 const getDate = () => dayjs().add(getRandomInteger(-MAX_MINUTES_GAP, MAX_MINUTES_GAP), 'minute');
-
 
 export const generateEvent = () => {
   const firstDate = getDate();
@@ -56,12 +50,10 @@ export const generateEvent = () => {
     eventDate: humanizeEventData()[0],
     dateFrom: dayjs(Math.min(firstDate, secondDate)).toDate(),
     dateTo: dayjs(Math.max(firstDate, secondDate)).toDate(),
-    // duration: generateDayTimeDate()[3],
     destination: getElement(Object.values(NAME_PLACES.map((el) => el.name))),
     description: '',
     photos: '',
     basePrice: getRandomInteger(TEMPORARY.integerPrice1, TEMPORARY.integerPrice2),
-    // basePrice: 0,
     typeEvent: eventType,
     offers: offersOne,
     isFavorite: Boolean(getRandomInteger(0, 1)),
