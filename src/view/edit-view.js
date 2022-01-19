@@ -39,6 +39,14 @@ const createDestinationTemplate = (place) => (
   >`
 );
 
+const createDestinationOptionsTemplate = (destinationsArray) => {
+  let destinationsList = '';
+  destinationsArray.forEach((destinationOne) => {
+    destinationsList += createDestinationTemplate(destinationOne.name);
+  });
+  return destinationsList;
+};
+
 const createOfferTemplate = (offer, typeEvent, namesOffers) => {
 
   let offerName =  namesOffers.filter((it)  => it.description === offer.title);
@@ -62,10 +70,12 @@ const createOfferTemplate = (offer, typeEvent, namesOffers) => {
             </label>
           </div>`;
 };
+                        // ${Object.values(NAME_PLACES.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
 
-
-export const createEditTemplate = (event) => {
+export const createEditTemplate = (event, destinations) => {
   const {offers, typeEvent, destination, basePrice, dateFrom, dateTo} = event;
+
+  console.log(destinations);
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -89,9 +99,10 @@ export const createEditTemplate = (event) => {
                       <label class="event__label  event__type-output" for="event-destination-1">
                         ${firstToUpperCase(typeEvent)}
                       </label>
-                      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
+                      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
                       <datalist id="destination-list-1">
-                        ${Object.values(NAME_PLACES.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
+                        // ${destinations}
+
                       </datalist>
                     </div>
 
@@ -144,12 +155,11 @@ export const createEditTemplate = (event) => {
 };
 
 export default class EditView extends SmartView {
-
-  #element = null;
   #dateFromPicker = null;
   #dateToPicker = null;
+  #destinationsArray = null;
 
-  constructor(point = BLANK_POINT(EventTypesOffers)) {
+  constructor(point = BLANK_POINT(EventTypesOffers), destinationsArray) {
     super();
 
     this._data = EditView.parsePointToData(point);
@@ -157,10 +167,15 @@ export default class EditView extends SmartView {
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.#destinationsArray = destinationsArray;
+    // console.log(this.#destinationsArray);
   }
 
   get template() {
-    return createEditTemplate(this._data);
+
+
+    return createEditTemplate(this._data, this.#destinationsArray);
+    // console.log(this.#destinationsArray);
   }
 
   setDeleteClickHandler = (callback) => {
@@ -256,9 +271,7 @@ export default class EditView extends SmartView {
 
     const idOffer = +evt.target.dataset.id;
 
-
     const oldOffers =  this._data.offers;
-
 
     if (idOffer) {
       oldOffers.forEach((it) => {
@@ -273,7 +286,6 @@ export default class EditView extends SmartView {
       offers: oldOffers,
     });
   }
-
 
   reset = (point) => {
     this.updateData(

@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -15,15 +17,22 @@ export default class ApiService {
   }
 
   get points() {
-    return this.#load({url: 'points'})
-      .then(ApiService.parseResponse);
+    return this.#load({url: 'points'}).then(ApiService.parseResponse);
+  }
+
+  get destination() {
+    return this.#load({url: 'destinations'}).then(ApiService.parseResponse);
+  }
+
+  get offers() {
+    return this.#load({url: 'offers'}).then(ApiService.parseResponse);
   }
 
   updatePoint = async (point) => {
     const response = await this.#load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -31,6 +40,7 @@ export default class ApiService {
 
     return parsedResponse;
   }
+
 
   #load = async ({
     url,
@@ -73,7 +83,6 @@ export default class ApiService {
 
     return adaptedPoint;
   }
-
 
   static checkStatus = (response) => {
     if (!response.ok) {
