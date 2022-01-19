@@ -16,8 +16,6 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
 
-  #destination = null;
-
   #point = null;
   #mode = Mode.DEFAULT;
 
@@ -27,17 +25,14 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point, destination) => {
+  init = (point, destination, offers) => {
     this.#point = point;
-    this.#destination = destination;
-    // console.log(destination);
-
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView(point);
-    this.#pointEditComponent = new EditView(point, destination);
+    this.#pointEditComponent = new EditView(point, destination, offers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);

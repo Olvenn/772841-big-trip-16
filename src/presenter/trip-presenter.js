@@ -131,7 +131,7 @@ export default class TripPresenter {
 
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#coverPointsComponent, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point, this.#pointsModel.destination);
+    pointPresenter.init(point, this.#pointsModel.destination, this.#pointsModel.offers);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 

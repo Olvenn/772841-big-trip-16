@@ -1,5 +1,4 @@
-import {EVENT_COUNT, MenuItem} from './consts.js';
-import {generateEvent} from './moki/moki.js';
+import {MenuItem} from './consts.js';
 
 import ContolView from './view/control-view.js';
 
@@ -31,14 +30,10 @@ const mainElement = document.querySelector('.trip-events');
 const siteMenuComponent = new ContolView();
 let statisticsComponent = null;
 // render(tripMainElement, new InfoView(), RenderPosition.AFTERBEGIN);
-render(controlElement, siteMenuComponent, RenderPosition.AFTEREND);
 // render(filterElement, new FilterView(), RenderPosition.AFTEREND);
 
 
-const points = Array.from({length: EVENT_COUNT}, generateEvent);
-
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
-// pointsModel.points = points;
 
 const infoPresenter = new InfoPresenter(tripMainElement, pointsModel);
 const filterModel = new FilterModel();
@@ -50,8 +45,6 @@ const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsMo
 filterPresenter.init();
 
 infoPresenter.init();
-
-pointsModel.init();
 
 newPointBtn.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -79,5 +72,8 @@ const citeMenuClickHandle = (menuOptionName) => {
 
 };
 
-siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
+pointsModel.init().finally(() => {
+  render(controlElement, siteMenuComponent, RenderPosition.AFTEREND);
+  siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
+});
 

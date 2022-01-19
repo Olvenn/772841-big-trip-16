@@ -1,6 +1,5 @@
 import AbstractObservable from '../utils/abstract-observable.js';
 import {UpdateType} from '../consts.js';
-import dayjs from 'dayjs';
 
 export default class PointsModel extends AbstractObservable {
   #apiService = null;
@@ -12,10 +11,10 @@ export default class PointsModel extends AbstractObservable {
     super();
     this.#apiService = apiService;
 
-    this.#apiService.destination.then((destination) => {
+    // this.#apiService.offers.then((offers) => {
     //   // console.log(points);
     //   // console.log(destination);
-      console.log(destination);
+    // console.log(offers);
 
 
     //   // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
@@ -23,7 +22,7 @@ export default class PointsModel extends AbstractObservable {
     //   // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
     //   // Есть вариант получше - паттерн "Адаптер"
     //       //  console.log(points.map(this.#adaptToClient));
-    });
+    // });
   }
 
   get points() {
@@ -47,35 +46,44 @@ export default class PointsModel extends AbstractObservable {
 
     } catch(err) {
       this.#points = [];
-      this.#destination = [];
     }
 
     this._notify(UpdateType.INIT);
   }
 
-  updatePoint = (updateType, update) => {
+  updatePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
+    try {
+      const response = await this.#apiService.updatePoint(update);
+      const updatePoint = this.#adaptToClient(response);
 
-    this._notify(updateType, update);
-  }
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatePoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, updatePoint);
+    } catch(err) {
+      throw new Error('Can\'t update point');
+    }
+  };
 
-  addPoint = (updateType, update) => {
-    this.#points = [
-      update,
-      ...this.#points,
-    ];
 
-    this._notify(updateType, update);
+  addPoint = async (updateType, update) => {
+    try {
+      const response = await this.#apiService.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+
+      this.#points = [newPoint, ...this.#points];
+      this._notify(updateType, newPoint);
+    } catch(err) {
+      throw new Error('Can\'t add point');
+    }
   }
 
   deletePoint = (updateType, update) => {
