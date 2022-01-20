@@ -9,17 +9,19 @@ export default class NewPointPresenter {
   #changeData = null;
   #pointEditComponent = null;
 
+
   constructor(tripContainer, changeData) {
     this.#tripContainer = tripContainer;
     this.#changeData = changeData;
   }
 
-  init = (point) => {
+  init = (point, destination, offers) => {
+
     if (this.#pointEditComponent !== null) {
       return;
     }
 
-    this.#pointEditComponent = new EditView(point);
+    this.#pointEditComponent = new EditView(point, destination, offers);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);

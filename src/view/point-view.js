@@ -1,7 +1,6 @@
 import AbstractView from './abstract-view.js';
 import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 import dayjs from 'dayjs';
-import he from 'he';
 
 const createEventOfferTemplate = (offer) => (
   `<li class="event__offer">
@@ -35,7 +34,7 @@ const createEventTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${typeEvent}.png" alt="${typeEvent} icon">
         </div>
-        <h3 class="event__title">${firstToUpperCase(typeEvent)} ${he.encode(destination)}</h3>
+        <h3 class="event__title">${firstToUpperCase(typeEvent)} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T10:30">${humanizeEventTime(dateFrom)}</time>
@@ -67,6 +66,7 @@ const createEventTemplate = (point) => {
       </div>
   </li>`;
 };
+
 
 export default class PointView extends AbstractView {
   #element = null;

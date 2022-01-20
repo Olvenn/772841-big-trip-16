@@ -1,5 +1,4 @@
-import {EVENT_COUNT, MenuItem} from './consts.js';
-import {generateEvent} from './moki/moki.js';
+import {MenuItem} from './consts.js';
 
 import ContolView from './view/control-view.js';
 
@@ -16,33 +15,33 @@ import InfoPresenter from './presenter/info-presenter.js';
 
 import StatsView from './view/stats-view';
 
+import ApiService from './api-service.js';
+
+
+const AUTHORIZATION = 'Basic 1q2w3e4r5t';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+
 const tripMainElement = document.querySelector('.trip-main');
 const controlElement = document.querySelector('.trip-controls__navigation');
 const filterElement = document.querySelector('[data-view="filter"]');
 const newPointBtn = document.querySelector('.trip-main__event-add-btn');
+const mainElement = document.querySelector('.trip-events');
 
 const siteMenuComponent = new ContolView();
 let statisticsComponent = null;
 // render(tripMainElement, new InfoView(), RenderPosition.AFTERBEGIN);
-render(controlElement, siteMenuComponent, RenderPosition.AFTEREND);
 // render(filterElement, new FilterView(), RenderPosition.AFTEREND);
 
 
-const mainElement = document.querySelector('.trip-events');
-
-const points = Array.from({length: EVENT_COUNT}, generateEvent);
-
-const pointsModel = new PointsModel();
-pointsModel.points = points;
+const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 
 const infoPresenter = new InfoPresenter(tripMainElement, pointsModel);
 const filterModel = new FilterModel();
-
 const tripPresenter = new TripPresenter(mainElement, pointsModel, filterModel);
 
 tripPresenter.init();
 
-const filterPresenter = new FilterPresenter(filterElement, filterModel);
+const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 filterPresenter.init();
 
 infoPresenter.init();
@@ -73,5 +72,8 @@ const citeMenuClickHandle = (menuOptionName) => {
 
 };
 
-siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
+pointsModel.init().finally(() => {
+  render(controlElement, siteMenuComponent, RenderPosition.AFTEREND);
+  siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
+});
 

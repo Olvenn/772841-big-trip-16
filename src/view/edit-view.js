@@ -1,7 +1,5 @@
-
-import {EventTypes, NAME_PLACES, offersNames, EventTypesOffers} from '../consts.js';
+import {EventTypes} from '../consts.js';
 import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
-import {generatePlace} from '../moki/moki.js';
 import SmartView from './smart-view.js';
 import {nanoid} from 'nanoid';
 import flatpickr from 'flatpickr';
@@ -20,8 +18,8 @@ const BLANK_POINT = () => {
     duration: '',
     destination: 'Geneva',
     basePrice: '',
-    typeEvent: 'flight',
-    offers: EventTypesOffers.filter((el) => el.type === eventType)[0].offers,
+    typeEvent: eventType,
+    offers: [],
     isFavorite: false,
   };
 };
@@ -35,37 +33,29 @@ const createTypeTemplate = (typeName, typesEvent) => (
 );
 
 const createDestinationTemplate = (place) => (
-  `<option value="${place}"></option>
-  >`
+  `<option value="${place}"></option>`
 );
 
-const createOfferTemplate = (offer, typeEvent, namesOffers) => {
-
-  let offerName =  namesOffers.filter((it)  => it.description === offer.title);
-
-  if (offerName.length === 0) {
-    offerName = 'luggage';
-  } else {
-    offerName = offerName[0].name;
-  }
-
-  return `<div class="event__offer-selector">
+const createOfferTemplate = (offer) => (
+  `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden"
-            id="event-offer-${offerName}-1" data-id="${offer.id}" type="checkbox" name="event-offer-${offerName}"
+            id="event-offer-${offer.id}-1" data-id="${offer.id}" type="checkbox" name="event-offer-${offer.id}"
              ${offer.isChecked ? ' checked' : ''}
             }>
-            <label class="event__offer-label" for="event-offer-${offerName}-1">
+            <label class="event__offer-label" for="event-offer-${offer.id}-1">
               <span class="event__offer-title">${offer.title}</span>
 
               &plus;&euro;&nbsp;
-              <span class="event__offer-${offerName}">${offer.price}</span>
+              <span class="event__offer-${offer.id}">${offer.price}</span>
             </label>
-          </div>`;
-};
+          </div>`
+);
 
 
-export const createEditTemplate = (event) => {
-  const {offers, typeEvent, destination, basePrice, dateFrom, dateTo} = event;
+export const createEditTemplate = (event, destinations) => {
+  const {offers, typeEvent, basePrice, destination, dateFrom, dateTo} = event;
+  // console.log(offers);
+
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -86,14 +76,15 @@ export const createEditTemplate = (event) => {
                     </div>
 
                     <div class="event__field-group  event__field-group--destination">
-                      <label class="event__label  event__type-output" for="event-destination-1">
-                        ${firstToUpperCase(typeEvent)}
-                      </label>
-                      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
-                      <datalist id="destination-list-1">
-                        ${Object.values(NAME_PLACES.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
-                      </datalist>
-                    </div>
+                    <label class="event__label  event__type-output" for="event-destination-1">
+                      ${firstToUpperCase(typeEvent)}
+                    </label>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
+                    <datalist id="destination-list-1">
+                      ${Object.values(destinations.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
+
+                    </datalist>
+                  </div>
 
                     <div class="event__field-group  event__field-group--time">
                       <label class="visually-hidden" for="event-start-time-1">From</label>
@@ -123,17 +114,17 @@ export const createEditTemplate = (event) => {
 
                       <div class="event__available-offers">
 
-                    ${offers.length > 0 ? offers.map((it) => createOfferTemplate(it, typeEvent, offersNames)).join('\n') : ''}
+                    ${offers.length > 0 ? offers.map((it) => createOfferTemplate(it)).join('\n') : ''}
 
                       </div>
                     </section>
 
                     <section class="event__section  event__section--destination">
                       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                      <p class="event__destination-description">${generatePlace().description}</p>
+                      <p class="event__destination-description">${destination.description}</p>
                       <div class="event__photos-container">
                       <div class="event__photos-tape">
-                      >${generatePlace().pictures}
+                     ${destination.pictures.map((el) => `<img class="event__photo" src="${el.src}" alt="${el.description}"></img>`).join()}
                       </div>
                     </div>
                   </section>
@@ -144,23 +135,28 @@ export const createEditTemplate = (event) => {
 };
 
 export default class EditView extends SmartView {
-
-  #element = null;
   #dateFromPicker = null;
   #dateToPicker = null;
+  #destinationsAll = null;
+  #offersAll = null;
 
-  constructor(point = BLANK_POINT(EventTypesOffers)) {
+  constructor(point = BLANK_POINT(), destinationsAll, offersAll) {
     super();
 
     this._data = EditView.parsePointToData(point);
+    this.#destinationsAll = destinationsAll;
+    this.#offersAll = offersAll;
 
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setDeleteClickHandler(this._callback.deleteClick);
+
   }
 
   get template() {
-    return createEditTemplate(this._data);
+
+    return createEditTemplate(this._data, this.#destinationsAll, this.#offersAll);
+
   }
 
   setDeleteClickHandler = (callback) => {
@@ -229,18 +225,22 @@ export default class EditView extends SmartView {
 
   #onTypeChange = (evt) => {
     evt.preventDefault();
+    // console.log(this.#offersAll.filter((it) => it.type === evt.target.value));
     this.updateData({
       typeEvent: evt.target.value,
-      offers: EventTypesOffers.filter((el) => el.type === evt.target.value)[0].offers,
+      offers: this.#offersAll.filter((it) => it.type === evt.target.value),
     });
   };
 
   #onCityChange = (evt) => {
     evt.preventDefault();
+
+    const destinationNew = this.#destinationsAll.find((it) => it.name === evt.target.value);
+
     this.updateData({
       destination: evt.target.value,
-      description: generatePlace().description,
-      pictures: generatePlace().pictures,
+      description: destinationNew.description,
+      pictures: destinationNew.pictures,
     });
   };
 
@@ -256,9 +256,7 @@ export default class EditView extends SmartView {
 
     const idOffer = +evt.target.dataset.id;
 
-
     const oldOffers =  this._data.offers;
-
 
     if (idOffer) {
       oldOffers.forEach((it) => {
@@ -273,7 +271,6 @@ export default class EditView extends SmartView {
       offers: oldOffers,
     });
   }
-
 
   reset = (point) => {
     this.updateData(

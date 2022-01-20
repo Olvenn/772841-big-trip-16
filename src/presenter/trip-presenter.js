@@ -6,6 +6,7 @@ import CoverPointsView from '../view/cover-points-view.js';
 import EmptyView from '../view/empty-view';
 import {UserAction, UpdateType, FilterType} from '../consts.js';
 import {filter} from '../utils/filter.js';
+import LoadingView from '../view/loading-view.js';
 
 
 import PointPresenter from './point-presenter.js';
@@ -19,12 +20,14 @@ export default class TripPresenter {
   #sortComponent = null;
   #filterModel = null;
 
+
   #pointPresenter = new Map();
   #coverPointsComponent = new CoverPointsView();
+  #loadingComponent = new LoadingView();
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
-
+  #isLoading = true;
 
   constructor(tripContainer, pointsModel, filterModel) {
     this.#tripContainer = tripContainer;
@@ -52,15 +55,13 @@ export default class TripPresenter {
     return filteredPoints;
   }
 
-
   init = () => {
 
     render(this.#tripContainer, this.#coverPointsComponent, RenderPosition.BEFOREEND);
 
+    this.#renderCoverPoints();
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
-    this.#renderCoverPoints();
   }
 
   #handleModeChange = () => {
@@ -97,6 +98,11 @@ export default class TripPresenter {
         this.#clearAll(true);
         this.#renderCoverPoints();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderCoverPoints();
+        break;
     }
   }
 
@@ -125,13 +131,17 @@ export default class TripPresenter {
 
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#coverPointsComponent, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point);
+    pointPresenter.init(point, this.#pointsModel.destination, this.#pointsModel.offers);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 
 
   #renderPoints = () => {
     this.points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderLoading = () => {
+    render(this.#coverPointsComponent, this.#loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   #renderNoPoint = () => {
@@ -146,6 +156,7 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
@@ -167,6 +178,11 @@ export default class TripPresenter {
 
 
   #renderCoverPoints = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoint();
       return;
