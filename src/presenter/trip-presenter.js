@@ -1,5 +1,5 @@
 import {render, RenderPosition, remove} from '../utils/render.js';
-import {sortByPrice, sortByDuration} from '../utils/common.js';
+import {sortByDay, sortByPrice, sortByDuration} from '../utils/common.js';
 import {SortType} from '../consts.js';
 import SortView from '../view/sort-view.js';
 import CoverPointsView from '../view/cover-points-view.js';
@@ -7,9 +7,10 @@ import EmptyView from '../view/empty-view';
 import {UserAction, UpdateType, FilterType} from '../consts.js';
 import {filter} from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
+import {BLANK_POINT} from '../consts.js';
 
 
-import PointPresenter from './point-presenter.js';
+import PointPresenter,  {State as tripState} from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
 export default class TripPresenter {
@@ -45,7 +46,7 @@ export default class TripPresenter {
 
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return filteredPoints;
+        return filteredPoints.sort(sortByDay);
       case SortType.TIME:
         return filteredPoints.sort(sortByDuration);
       case SortType.PRICE:
@@ -69,18 +70,46 @@ export default class TripPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
 
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this.#pointPresenter.get(update.id).setViewState(tripState.SAVING);
         this.#pointsModel.updatePoint(updateType, update);
+
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenter.get(update.id).setViewState(tripState.ABORTING);
+        }
+
         break;
+
       case UserAction.ADD_POINT:
+        this.#newPointPresenter.setSaving();
         this.#pointsModel.addPoint(updateType, update);
+
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.#newPointPresenter.getDisabledAddBtn(true);
+          this.#pointsModel.setAborting();
+        }
+
         break;
+
       case UserAction.DELETE_POINT:
+        this.#pointPresenter.get(update.id).setViewState(tripState.DELETING);
         this.#pointsModel.deletePoint(updateType, update);
+
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenter.get(update.id).setViewState(tripState.ABORTING);
+        }
+
         break;
+
     }
   }
 
@@ -106,10 +135,11 @@ export default class TripPresenter {
     }
   }
 
-  createPointEvent = (callback) => {
+
+  createPointEvent = () => {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init(callback);
+    this.#newPointPresenter.init(BLANK_POINT, this.#pointsModel.destination, this.#pointsModel.offers);
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -134,7 +164,6 @@ export default class TripPresenter {
     pointPresenter.init(point, this.#pointsModel.destination, this.#pointsModel.offers);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
-
 
   #renderPoints = () => {
     this.points.forEach((point) => this.#renderPoint(point));

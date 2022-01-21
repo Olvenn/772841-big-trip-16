@@ -10,19 +10,6 @@ export default class PointsModel extends AbstractObservable {
   constructor(apiService) {
     super();
     this.#apiService = apiService;
-
-    // this.#apiService.offers.then((offers) => {
-    //   // console.log(points);
-    //   // console.log(destination);
-    // console.log(offers);
-
-
-    //   // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
-    //   // а ещё на сервере используется snake_case, а у нас camelCase.
-    //   // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
-    //   // Есть вариант получше - паттерн "Адаптер"
-    //       //  console.log(points.map(this.#adaptToClient));
-    // });
   }
 
   get points() {
@@ -107,8 +94,6 @@ export default class PointsModel extends AbstractObservable {
       basePrice: point['base_price'],
       dateFrom: point['date_from'],
       dateTo: point['date_to'],
-      // dateFrom: dayjs(point['date_from']),
-      // dateTo: dayjs(point['date_to']),
       isFavorite: point['is_favorite'],
       typeEvent: point['type'],
     };

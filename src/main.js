@@ -17,7 +17,6 @@ import StatsView from './view/stats-view';
 
 import ApiService from './api-service.js';
 
-
 const AUTHORIZATION = 'Basic 1q2w3e4r5t';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
@@ -44,7 +43,7 @@ tripPresenter.init();
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 filterPresenter.init();
 
-infoPresenter.init();
+// infoPresenter.init();
 
 newPointBtn.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -73,6 +72,7 @@ const citeMenuClickHandle = (menuOptionName) => {
 };
 
 pointsModel.init().finally(() => {
+  infoPresenter.init();
   render(controlElement, siteMenuComponent, RenderPosition.AFTEREND);
   siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
 });
