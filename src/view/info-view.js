@@ -2,7 +2,6 @@ import AbstractView from './abstract-view.js';
 import {getArrayWithDots, sortByDay} from '../utils/common.js';
 import dayjs from 'dayjs';
 
-// const getTripInfoTitle = getArrayWithDots(Object.values(NAME_PLACES.map((el) => el.name))).join(' &mdash; ');
 
 const createInfoTemplate = (citys, dates, price) => (
   `<section class="trip-main__trip-info  trip-info">

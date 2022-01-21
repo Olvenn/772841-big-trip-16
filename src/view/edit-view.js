@@ -32,7 +32,7 @@ const createOfferTemplate = (offer, isDisabled) => (
 
 export const createEditTemplate = (point, destinations, offersList) => {
 
-  const {offers, typeEvent, basePrice, destination, dateFrom, dateTo,
+ const {offers, typeEvent, basePrice, destination, dateFrom, dateTo,
     isDisabled,
     isSaving,
     isDeleting,} = point;
@@ -43,16 +43,17 @@ export const createEditTemplate = (point, destinations, offersList) => {
   const typeOffersList  = offersList.find((it) => it.type ===  typeEvent).offers;
 
 
-  typeOffersList.map((it) => {
-    const id = it.id;
-    if (idCheckedItems.indexOf(id) !== -1) {
-      // console.log("idCheckedItems");
+// console.log('typeOffersList', typeOffersList);
+// console.log(idCheckedItems);
+  typeOffersList.forEach((it) => {
+    if (idCheckedItems.indexOf(it.id) !== -1) {
       it.isChecked = true;
+      // console.log(it);
+    } else {
+      it.isChecked = false;
     }
   });
-  // typeOffersList[0].isChecked = true;
-  // console.log(typeOffersList[0]);
-
+// console.log('after', typeOffersList);
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -140,6 +141,7 @@ export default class EditView extends SmartView {
   #dateToPicker = null;
   #destinationsAll = null;
   #offersAll = null;
+  #point = null;
 
   constructor(point = BLANK_POINT, destinationsAll, offersAll) {
     super();
@@ -147,6 +149,7 @@ export default class EditView extends SmartView {
     this._data = EditView.parsePointToData(point);
     this.#destinationsAll = destinationsAll;
     this.#offersAll = offersAll;
+    this.#point = point;
 
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -254,21 +257,37 @@ export default class EditView extends SmartView {
     evt.preventDefault();
 
     const idOffer = +evt.target.dataset.id;
+    const nameOffer = this.#point.typeEvent;
+    console.log(nameOffer);
 
-    const newOffers =  this._data.offers;
+    console.log(this.#point);
+    console.log(idOffer);
 
+    // Массив выбранных offers
+    const offerItemsChecked =  this.#point.offers;
+    console.log("old", offerItemsChecked);
 
-    if (idOffer) {
-      newOffers.forEach((it) => {if (idOffer === it.id) {
-        it.isChecked = !(it.isChecked);
+    // Массив всех  offers
+    // const offersAll =  this.#offersAll;
+    // Массив всех offers данного point
+    // const typeOffersList  = offersAll.find((it) => it.type ===  nameOffer).offers;
+    const newOfferItemsChecked = offerItemsChecked;
+    offerItemsChecked.forEach((it) => {
+      if (+it.id !== idOffer) {
+        newOfferItemsChecked.push(it);
+        // console.log('adfe', it);
       }
-      });
-    }
+    });
+
+
+
+    console.log("new", newOfferItemsChecked);
 
 
     this.updateData({
-      offers: newOffers,
-    }, true);
+      offers: newOfferItemsChecked,
+    });
+
   }
 
 

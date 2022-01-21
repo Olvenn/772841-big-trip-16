@@ -15,6 +15,8 @@ export default class NewPointPresenter {
   }
 
   init = (point, destination, offers) => {
+    console.log(point);
+
 
     if (this.#pointEditComponent !== null) {
       return;
@@ -22,10 +24,10 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent = new EditView(point, destination, offers);
 
+
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
-
-    // this.#pointEditComponent.setOnEditPointClick(this.#handleDeleteClick);
+    this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
 
     render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
 
@@ -38,10 +40,12 @@ export default class NewPointPresenter {
       return;
     }
 
+    // document.removeEventListener('keydown', this.#escKeyDownHandler);
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
+
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -74,6 +78,7 @@ export default class NewPointPresenter {
   }
 
   #handleFormSubmit = (point) => {
+        console.log(point);
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
