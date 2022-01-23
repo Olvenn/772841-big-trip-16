@@ -6,12 +6,7 @@ export const BLANK_POINT =  (
     dateFrom: new Date(),
     dateTo: new Date(),
     duration: '',
-    destination: {
-      description: '',
-      name: 'Geneva',
-      pictures: [
-      ],
-    },
+    // destination: {},
     basePrice: '',
     typeEvent: 'flight',
     offers: [],

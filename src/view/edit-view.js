@@ -2,7 +2,8 @@ import {EventTypes, BLANK_POINT} from '../consts.js';
 import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
-// import he from 'he';
+import he from 'he';
+
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createTypeTemplate = (typeName, typesEvent, isDisabled) => (
@@ -32,28 +33,26 @@ const createOfferTemplate = (offer, isDisabled) => (
 
 export const createEditTemplate = (point, destinations, offersList) => {
 
- const {offers, typeEvent, basePrice, destination, dateFrom, dateTo,
+  const {offers, typeEvent, basePrice, destination, dateFrom, dateTo,
     isDisabled,
     isSaving,
     isDeleting,} = point;
 
-  const getDestination = destination.description !== '' ? destination : destinations.find((it) => it.name === destination.name);
 
-  const idCheckedItems = offers.map((it) => it.id);
+  const getDestination = destination ? destination : destinations[0];
+
   const typeOffersList  = offersList.find((it) => it.type ===  typeEvent).offers;
 
-
-// console.log('typeOffersList', typeOffersList);
-// console.log(idCheckedItems);
+  const idCheckedItems = offers.map((it) => it.id);
   typeOffersList.forEach((it) => {
     if (idCheckedItems.indexOf(it.id) !== -1) {
       it.isChecked = true;
-      // console.log(it);
     } else {
       it.isChecked = false;
     }
   });
-// console.log('after', typeOffersList);
+
+  const isSubmitDisabled = basePrice <= 0;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -68,7 +67,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                       <div class="event__type-list">
                         <fieldset class="event__type-group">
                           <legend class="visually-hidden">Event type</legend>
-                            ${EventTypes.map((it) => createTypeTemplate(EventTypes.typeEvent, it)).join('\n')}
+                            ${EventTypes.map((it) => createTypeTemplate(EventTypes.typeEvent, it, isDisabled)).join('\n')}
                         </fieldset>
                       </div>
                     </div>
@@ -77,7 +76,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${firstToUpperCase(typeEvent)}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                       ${Object.values(destinations.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
 
@@ -101,7 +100,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                     </div>
 
                     <button class="event__save-btn  btn  btn--blue" type="submit"
-                     ${isDisabled ? 'disabled' : ''}
+                     ${isSubmitDisabled || isDisabled ? 'disabled' : ''}
                     >${isSaving ? 'Saving...' : 'Save'}</button>
                     <button class="event__reset-btn" type="reset" ${isDeleting ? 'Deleting...' : 'Delete'}
                     >Delete</button>
@@ -115,7 +114,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
 
                       <div class="event__available-offers">
 
-                    ${typeOffersList.length > 0 ? typeOffersList.map((it) => createOfferTemplate(it)).join('\n') : ''}
+                    ${typeOffersList.length > 0 ? typeOffersList.map((it) => createOfferTemplate(it, isDisabled)).join('\n') : ''}
 
                       </div>
                     </section>
@@ -193,17 +192,16 @@ export default class EditView extends SmartView {
     );
   }
 
-  #dateFromChangeHandler = ([userDate]) => {
-    this.updateData({
-      dateFrom: userDate,
-    });
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
+    this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#onCityChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInput);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
+    this.element.querySelector('#event-start-time-1').addEventListener('change', this.#onDateFromChange);
+
+    this.#setDatepicker();
   }
 
-  #dateToChangeHandler = ([userDate]) => {
-    this.updateData({
-      dateTo: userDate,
-    });
-  }
 
   removeElement = () => {
     super.removeElement();
@@ -219,13 +217,37 @@ export default class EditView extends SmartView {
     }
   }
 
-  #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
-    this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#onCityChange);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInput);
-    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
-    this.#setDatepicker();
 
+  #dateFromChangeHandler = ([userDate]) => {
+    // console.log('userDate', userDate);
+    this.updateData({
+      dateFrom: userDate,
+    });
+  }
+
+  #onDateFromChange = (evt) => {
+    evt.preventDefault();
+    const dataFromInputElement = this.element.querySelector('#event-start-time-1');
+    // console.log('userDateChange', this._data.dateFrom );
+    if (this._data.dateFrom > this._data.dateTo) {
+      dataFromInputElement.style.color = '#ffffff';
+      this.updateData({
+        dateFrom: this._data.dateFrom,
+      });
+    } else {
+      const saveButtonElement = this.element.querySelector('.event__save-btn');
+
+      dataFromInputElement.style.color = 'rgb(178, 34, 34)';
+      dataFromInputElement.setCustomValidity('Start time must be earlier than end time.');
+      dataFromInputElement.reportValidity();
+      saveButtonElement.disabled = true;
+    }
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate,
+    });
   }
 
   #onTypeChange = (evt) => {
@@ -241,55 +263,67 @@ export default class EditView extends SmartView {
 
     const destinationNew = this.#destinationsAll.find((it) => it.name === evt.target.value);
 
-    this.updateData({
-      destination: destinationNew,
-    });
+    if (destinationNew) {
+
+      this.updateData({
+        destination: destinationNew,
+      });
+
+    } else {
+      const saveButtonElement = this.element.querySelector('.event__save-btn');
+      const cityInputElement = this.element.querySelector('.event__input--destination');
+      cityInputElement.style.color = 'rgb(178, 34, 34)';
+      cityInputElement.setCustomValidity('Please, change destination from list.');
+      cityInputElement.reportValidity();
+      saveButtonElement.disabled = true;
+    }
   };
 
   #onPriceInput = (evt) => {
     evt.preventDefault();
-    this.updateData({
-      basePrice: parseInt(evt.target.value, 10)
-    });
+    if(parseInt(evt.target.value, 10) > 0 || parseInt(evt.target.value, 10) === '') {
+      this.updateData({
+        basePrice: parseInt(evt.target.value, 10)
+      });
+    } else {
+      const saveButtonElement = this.element.querySelector('.event__save-btn');
+      const cityInputElement = this.element.querySelector('.event__input--price');
+      cityInputElement.style.color = 'rgb(178, 34, 34)';
+      cityInputElement.setCustomValidity('Enter an amount greater than 0.');
+      cityInputElement.reportValidity();
+      saveButtonElement.disabled = true;
+    }
   };
 
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
 
-    const idOffer = +evt.target.dataset.id;
-    const nameOffer = this.#point.typeEvent;
-    console.log(nameOffer);
+    const typeOffer = this.#point.typeEvent;
 
-    console.log(this.#point);
-    console.log(idOffer);
+    const offersAll =  this.#offersAll;
 
-    // Массив выбранных offers
-    const offerItemsChecked =  this.#point.offers;
-    console.log("old", offerItemsChecked);
+    const offersList  = offersAll.find((it) => it.type ===  typeOffer).offers;
 
-    // Массив всех  offers
-    // const offersAll =  this.#offersAll;
-    // Массив всех offers данного point
-    // const typeOffersList  = offersAll.find((it) => it.type ===  nameOffer).offers;
-    const newOfferItemsChecked = offerItemsChecked;
-    offerItemsChecked.forEach((it) => {
-      if (+it.id !== idOffer) {
-        newOfferItemsChecked.push(it);
-        // console.log('adfe', it);
+    let offerItemsChecked =  this.#point.offers;
+
+    const offersElements = document.querySelectorAll('.event__offer-checkbox:checked');
+
+    const idCheckedItemsFormAllOffers = [...offersElements].map((it) => +Object.values(it.dataset));
+
+    offersList.map((it) => {
+      if (idCheckedItemsFormAllOffers.indexOf(it.id) !== -1) {
+        it.isChecked = true;
+      } else {
+        it.isChecked = false;
       }
     });
 
-
-
-    console.log("new", newOfferItemsChecked);
-
+    offerItemsChecked = offersList.filter((it) => it.isChecked);
 
     this.updateData({
-      offers: newOfferItemsChecked,
+      offers: offerItemsChecked,
     });
-
   }
-
 
   reset = (point) => {
     this.updateData(
@@ -318,7 +352,6 @@ export default class EditView extends SmartView {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
-
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(EditView.parseDataToPoint(this._data));
@@ -333,12 +366,13 @@ export default class EditView extends SmartView {
   })
 
   static parseDataToPoint = (data) => {
-    delete data.isSaving;
-    delete data.isDisabled;
-    delete data.isDeleting;
 
-    return {...data};
+    const point = {...data};
+
+    delete point.isSaving;
+    delete point.isDisabled;
+    delete point.isDeleting;
+
+    return point;
   }
-
 }
-

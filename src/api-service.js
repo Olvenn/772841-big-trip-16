@@ -26,6 +26,27 @@ export default class ApiService {
     return this.#load({url: 'offers'}).then(ApiService.parseResponse);
   }
 
+  #load = async ({
+    url,
+    method = Method.GET,
+    body = null,
+    headers = new Headers(),
+  }) => {
+    headers.append('Authorization', this.#authorization);
+
+    const response = await fetch(
+      `${this.#endPoint}/${url}`,
+      {method, body, headers},
+    );
+
+    try {
+      ApiService.checkStatus(response);
+      return response;
+    } catch (err) {
+      ApiService.catchError(err);
+    }
+  }
+
   updatePoint = async (point) => {
     const response = await this.#load({
       url: `points/${point.id}`,
@@ -52,31 +73,15 @@ export default class ApiService {
     return parsedResponse;
   }
 
-  deletePoint = async (point) => await this.#load({
-    url: `points/${point.id}`,
-    method: Method.DELETE,
-  });
+  deleteTask = async (point) => {
+    const response = await this.#load({
+      url: `points/${point.id}`,
+      method: Method.DELETE,
+    });
 
-  #load = async ({
-    url,
-    method = Method.GET,
-    body = null,
-    headers = new Headers(),
-  }) => {
-    headers.append('Authorization', this.#authorization);
-
-    const response = await fetch(
-      `${this.#endPoint}/${url}`,
-      {method, body, headers},
-    );
-
-    try {
-      ApiService.checkStatus(response);
-      return response;
-    } catch (err) {
-      ApiService.catchError(err);
-    }
+    return response;
   }
+
 
   static parseResponse = (response) => response.json();
 

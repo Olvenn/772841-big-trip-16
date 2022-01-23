@@ -10,17 +10,6 @@ export default class PointsModel extends AbstractObservable {
   constructor(apiService) {
     super();
     this.#apiService = apiService;
-        this.#apiService.destination.then((destination) => {
-    //   // console.log(points);
-    //   // console.log(offers);
-    console.log(destination);
-
-    //   // Есть проблема: cтруктура объекта похожа, но некоторые ключи называются иначе,
-    //   // а ещё на сервере используется snake_case, а у нас camelCase.
-    //   // Можно, конечно, переписать часть нашего клиентского приложения, но зачем?
-    //   // Есть вариант получше - паттерн "Адаптер"
-    //       //  console.log(points.map(this.#adaptToClient));
-    });
   }
 
   get points() {
@@ -80,25 +69,30 @@ export default class PointsModel extends AbstractObservable {
       this.#points = [newPoint, ...this.#points];
       this._notify(updateType, newPoint);
     } catch(err) {
-      console.log(err);
+
 
       throw new Error('Can\'t add point');
     }
   }
 
-  deletePoint = (updateType, update) => {
+  deletePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
+    // console.log(index);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting point');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#apiService.deleteTask(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
   }
 
   #adaptToClient = (point) => {

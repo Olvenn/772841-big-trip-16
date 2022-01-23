@@ -75,7 +75,6 @@ export default class TripPresenter {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenter.get(update.id).setViewState(tripState.SAVING);
-        this.#pointsModel.updatePoint(updateType, update);
 
         try {
           await this.#pointsModel.updatePoint(updateType, update);
@@ -87,7 +86,7 @@ export default class TripPresenter {
 
       case UserAction.ADD_POINT:
         this.#newPointPresenter.setSaving();
-        this.#pointsModel.addPoint(updateType, update);
+        // this.#pointsModel.addPoint(updateType, update);
 
         try {
           await this.#pointsModel.addPoint(updateType, update);
@@ -100,7 +99,6 @@ export default class TripPresenter {
 
       case UserAction.DELETE_POINT:
         this.#pointPresenter.get(update.id).setViewState(tripState.DELETING);
-        this.#pointsModel.deletePoint(updateType, update);
 
         try {
           await this.#pointsModel.deletePoint(updateType, update);

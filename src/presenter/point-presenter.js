@@ -41,10 +41,12 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditView(point, destination, offers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
-    this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
     this.#pointEditComponent.setCloseFormHandler(this.#handleCloseFormClick);
+
+    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+
 
     render(this.#tripContainer, this.#pointComponent, RenderPosition.BEFOREEND);
 
@@ -59,8 +61,13 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
+
+    // if (this.#mode === Mode.EDITING) {
+    //   replace(this.#pointEditComponent, prevPointEditComponent);
+    // }
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
@@ -154,7 +161,7 @@ export default class PointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.#replaceFormToCard();
+    // this.#replaceFormToCard();
   }
 
   #handleDeleteClick = (point) => {

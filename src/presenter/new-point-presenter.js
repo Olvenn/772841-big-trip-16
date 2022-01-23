@@ -15,13 +15,13 @@ export default class NewPointPresenter {
   }
 
   init = (point, destination, offers) => {
-    console.log(point);
-
+    if(!point.destination) {
+      point.destination = destination[0];
+    }
 
     if (this.#pointEditComponent !== null) {
       return;
     }
-
     this.#pointEditComponent = new EditView(point, destination, offers);
 
 
@@ -29,10 +29,10 @@ export default class NewPointPresenter {
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
     this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
 
+    //Нужно ли устанавливать     this.#tripEventEditorComponent.setDatePickers();
     render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.escKeydownHandler);
-
   }
 
   destroy = () => {
@@ -40,7 +40,6 @@ export default class NewPointPresenter {
       return;
     }
 
-    // document.removeEventListener('keydown', this.#escKeyDownHandler);
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
@@ -78,13 +77,11 @@ export default class NewPointPresenter {
   }
 
   #handleFormSubmit = (point) => {
-        console.log(point);
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
       point,
     );
-    // this.destroy();
   }
 }
 
