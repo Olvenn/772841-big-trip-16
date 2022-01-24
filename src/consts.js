@@ -1,7 +1,18 @@
 import {generateDescription, descriptionsArray} from './moki/moki.js';
 export const EVENT_COUNT = 3;
 
-export const typePoint = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+export const BLANK_POINT =  (
+  { eventDate:  new Date(),
+    dateFrom: new Date(),
+    dateTo: new Date(),
+    duration: '',
+    // destination: {},
+    basePrice: '',
+    typeEvent: 'flight',
+    offers: [],
+    isFavorite: false,
+  }
+);
 
 export const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',

@@ -1,8 +1,7 @@
 import EditView from '../view/edit-view';
-import {nanoid} from 'nanoid';
+
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../consts.js';
-
 
 export default class NewPointPresenter {
   #tripContainer = null;
@@ -16,20 +15,24 @@ export default class NewPointPresenter {
   }
 
   init = (point, destination, offers) => {
+    if(!point.destination) {
+      point.destination = destination[0];
+    }
 
     if (this.#pointEditComponent !== null) {
       return;
     }
-
     this.#pointEditComponent = new EditView(point, destination, offers);
+
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
 
+    //Нужно ли устанавливать     this.#tripEventEditorComponent.setDatePickers();
     render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.escKeydownHandler);
-
   }
 
   destroy = () => {
@@ -42,6 +45,7 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -53,12 +57,31 @@ export default class NewPointPresenter {
     this.destroy();
   };
 
+  setSaving = () => {
+    this.#pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      {id: nanoid(), ...point},
+      point,
     );
-    this.destroy();
   }
 }
+

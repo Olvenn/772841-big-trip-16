@@ -2,6 +2,7 @@ import AbstractView from './abstract-view.js';
 import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 import dayjs from 'dayjs';
 
+
 const createEventOfferTemplate = (offer) => (
   `<li class="event__offer">
                         <span class="event__offer-title">${offer.title}</span>
@@ -78,6 +79,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
+
     return createEventTemplate(this.#point);
   }
 
