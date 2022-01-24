@@ -26,6 +26,7 @@ export default class TripPresenter {
   #coverPointsComponent = new CoverPointsView();
   #loadingComponent = new LoadingView();
 
+
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
@@ -34,7 +35,7 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-
+    this.#sortComponent = new SortView(this.#currentSortType);
     this.#newPointPresenter = new NewPointPresenter(this.#coverPointsComponent, this.#handleViewAction);
   }
 
@@ -86,7 +87,7 @@ export default class TripPresenter {
 
       case UserAction.ADD_POINT:
         this.#newPointPresenter.setSaving();
-        // this.#pointsModel.addPoint(updateType, update);
+
 
         try {
           await this.#pointsModel.addPoint(updateType, update);
@@ -111,7 +112,6 @@ export default class TripPresenter {
     }
   }
 
-
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
@@ -133,7 +133,6 @@ export default class TripPresenter {
     }
   }
 
-
   createPointEvent = () => {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
@@ -152,7 +151,7 @@ export default class TripPresenter {
   }
 
   #renderSort = () => {
-    this.#sortComponent = new SortView(this.#currentSortType);
+
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     render(this.#tripContainer, this.#sortComponent, RenderPosition.AFTERBEGIN);
   }
@@ -178,6 +177,7 @@ export default class TripPresenter {
   }
 
   #clearAll = (resetSortType = false) => {
+
     this.#newPointPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
@@ -198,6 +198,7 @@ export default class TripPresenter {
     this.#clearAll(true);
 
     remove(this.#coverPointsComponent);
+
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);

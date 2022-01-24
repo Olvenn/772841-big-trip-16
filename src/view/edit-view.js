@@ -1,8 +1,10 @@
 import {EventTypes, BLANK_POINT} from '../consts.js';
-import {firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
+import {firstToUpperCase} from '../moki/utils.js';
+// import {humanizeEventTime} from '../moki/utils.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
+
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -31,14 +33,28 @@ const createOfferTemplate = (offer, isDisabled) => (
           </div>`
 );
 
+const createOffersTemplate = (isDisabled, typeOffersList) => (
+  `<section class="event__details">
+             <section class="event__section  event__section--offers">
+             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+            <div class="event__available-offers">
+
+            ${typeOffersList.map((it) => createOfferTemplate(it, isDisabled)).join('\n')}
+
+            </div>
+            </section>`
+);
+
+
 export const createEditTemplate = (point, destinations, offersList) => {
 
-  const {offers, typeEvent, basePrice, destination, dateFrom, dateTo,
+  const {id, offers, typeEvent, basePrice, destination, dateFrom, dateTo,
     isDisabled,
     isSaving,
     isDeleting,} = point;
 
-
+  const cancelOrDelete = id ? 'Delete' : 'Cancel';
   const getDestination = destination ? destination : destinations[0];
 
   const typeOffersList  = offersList.find((it) => it.type ===  typeEvent).offers;
@@ -76,7 +92,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${firstToUpperCase(typeEvent)}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}  autocomplete="false" >
                     <datalist id="destination-list-1">
                       ${Object.values(destinations.map((el) => el.name)).map((it) => createDestinationTemplate(it)).join('\n')}
 
@@ -85,10 +101,11 @@ export const createEditTemplate = (point, destinations, offersList) => {
 
                     <div class="event__field-group  event__field-group--time">
                       <label class="visually-hidden" for="event-start-time-1">From</label>
-                      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeEventTime(dateFrom)}" ${isDisabled ? 'disabled' : ''}>
+                      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}" ${isDisabled ? 'disabled' : ''}>
+
                       &mdash;
                       <label class="visually-hidden" for="event-end-time-1">To</label>
-                      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeEventTime(dateTo)}" ${isDisabled ? 'disabled' : ''}>
+                      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}" ${isDisabled ? 'disabled' : ''}>
                     </div>
 
                     <div class="event__field-group  event__field-group--price">
@@ -103,28 +120,20 @@ export const createEditTemplate = (point, destinations, offersList) => {
                      ${isSubmitDisabled || isDisabled ? 'disabled' : ''}
                     >${isSaving ? 'Saving...' : 'Save'}</button>
                     <button class="event__reset-btn" type="reset" ${isDeleting ? 'Deleting...' : 'Delete'}
-                    >Delete</button>
+                    >${cancelOrDelete}</button>
                     <button class="event__rollup-btn" type="button">
                       <span class="visually-hidden">Open event</span>
                     </button>
                   </header>
-                  <section class="event__details">
-                    <section class="event__section  event__section--offers">
-                      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-                      <div class="event__available-offers">
-
-                    ${typeOffersList.length > 0 ? typeOffersList.map((it) => createOfferTemplate(it, isDisabled)).join('\n') : ''}
-
-                      </div>
-                    </section>
+                  ${typeOffersList.length > 0 ? createOffersTemplate(isDisabled, typeOffersList) : ''}
 
                     <section class="event__section  event__section--destination">
                       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                       <p class="event__destination-description">${getDestination.description}</p>
                       <div class="event__photos-container">
                       <div class="event__photos-tape">
-                                          ${getDestination.pictures.map((el) => `<img class="event__photo" src="${el.src}" alt="${el.description}"></img>`).join()}
+                        ${getDestination.pictures.map((el) => `<img class="event__photo" src="${el.src}" alt="${el.description}"></img>`).join()}
                       </div>
 
                     </div>
@@ -150,10 +159,11 @@ export default class EditView extends SmartView {
     this.#offersAll = offersAll;
     this.#point = point;
 
+    // console.log(this._data);
+
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setDeleteClickHandler(this._callback.deleteClick);
-    this.#setDatepicker();
 
   }
 
@@ -177,16 +187,20 @@ export default class EditView extends SmartView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
+        maxDate: this._data.dateTo,
         defaultDate: this._data.dateFrom,
+
         onChange: this.#dateFromChangeHandler,
       },
     );
+
     this.#dateToPicker = flatpickr (
       this.element.querySelector('#event-end-time-1'),
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._data.dateTo,
+        minDate: this._data.dateFrom,
         onChange: this.#dateToChangeHandler,
       },
     );
@@ -194,14 +208,11 @@ export default class EditView extends SmartView {
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
-    this.element.querySelector('.event__field-group--destination').addEventListener('change', this.#onCityChange);
+    this.element.querySelector('.event__field-group--destination').addEventListener('input', this.#onCityChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceInput);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
-    this.element.querySelector('#event-start-time-1').addEventListener('change', this.#onDateFromChange);
-
     this.#setDatepicker();
   }
-
 
   removeElement = () => {
     super.removeElement();
@@ -219,35 +230,15 @@ export default class EditView extends SmartView {
 
 
   #dateFromChangeHandler = ([userDate]) => {
-    // console.log('userDate', userDate);
     this.updateData({
       dateFrom: userDate,
-    });
+    }, true);
   }
-
-  #onDateFromChange = (evt) => {
-    evt.preventDefault();
-    const dataFromInputElement = this.element.querySelector('#event-start-time-1');
-    // console.log('userDateChange', this._data.dateFrom );
-    if (this._data.dateFrom > this._data.dateTo) {
-      dataFromInputElement.style.color = '#ffffff';
-      this.updateData({
-        dateFrom: this._data.dateFrom,
-      });
-    } else {
-      const saveButtonElement = this.element.querySelector('.event__save-btn');
-
-      dataFromInputElement.style.color = 'rgb(178, 34, 34)';
-      dataFromInputElement.setCustomValidity('Start time must be earlier than end time.');
-      dataFromInputElement.reportValidity();
-      saveButtonElement.disabled = true;
-    }
-  };
 
   #dateToChangeHandler = ([userDate]) => {
     this.updateData({
       dateTo: userDate,
-    });
+    }, true);
   }
 
   #onTypeChange = (evt) => {
@@ -335,6 +326,8 @@ export default class EditView extends SmartView {
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setCloseFormHandler(this._callback.closeEdit);
+    // this.setOnDeleteClick(this._callback.deleteClick);
   }
 
   setCloseFormHandler = (callback) => {
@@ -344,7 +337,7 @@ export default class EditView extends SmartView {
 
   #closeFormHandler = (evt) => {
     evt.preventDefault();
-    this._callback.closeEdit();
+    this._callback.closeEdit(this._data);
   }
 
   setFormSubmitHandler = (callback) => {

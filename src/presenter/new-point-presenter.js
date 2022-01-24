@@ -28,11 +28,10 @@ export default class NewPointPresenter {
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
     this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
-
     //Нужно ли устанавливать     this.#tripEventEditorComponent.setDatePickers();
     render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
 
-    document.addEventListener('keydown', this.escKeydownHandler);
+    document.addEventListener('keydown', this.escKeyDownHandler);
   }
 
   destroy = () => {

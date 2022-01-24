@@ -28,9 +28,6 @@ const mainElement = document.querySelector('.trip-events');
 
 const siteMenuComponent = new ContolView();
 let statisticsComponent = null;
-// render(tripMainElement, new InfoView(), RenderPosition.AFTERBEGIN);
-// render(filterElement, new FilterView(), RenderPosition.AFTEREND);
-
 
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 
@@ -42,8 +39,6 @@ tripPresenter.init();
 
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 filterPresenter.init();
-
-// infoPresenter.init();
 
 newPointBtn.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -64,8 +59,9 @@ const citeMenuClickHandle = (menuOptionName) => {
       tripPresenter.destroy();
       filterPresenter.destroy();
 
-      statisticsComponent = new StatsView();
-      render(tripMainElement, statisticsComponent, RenderPosition.AFTEREND);
+      statisticsComponent = new StatsView(pointsModel.points);
+      mainElement.innerHTML = '';
+      render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
   }
 

@@ -2,7 +2,6 @@ import AbstractView from './abstract-view.js';
 import {getArrayWithDots, sortByDay} from '../utils/common.js';
 import dayjs from 'dayjs';
 
-
 const createInfoTemplate = (citys, dates, price) => (
   `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
@@ -17,7 +16,6 @@ const createInfoTemplate = (citys, dates, price) => (
   </section>`
 );
 
-
 export default class InfoView extends AbstractView {
   #points = [];
 
@@ -30,7 +28,6 @@ export default class InfoView extends AbstractView {
 
     return createInfoTemplate(this.#cityNames, this.#StartEndDates, this.#totalPrice);
   }
-
 
   #StartEndDates = () => {
     const points = this.#points;
