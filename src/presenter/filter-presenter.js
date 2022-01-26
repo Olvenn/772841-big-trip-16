@@ -30,7 +30,6 @@ export default class FilterPresenter {
     ];
   }
 
-
   init = () => {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
@@ -47,6 +46,8 @@ export default class FilterPresenter {
 
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   destroy = () => {
@@ -54,6 +55,7 @@ export default class FilterPresenter {
     this.#filterComponent = null;
 
     this.#filterModel.removeObserver(this.#handleModelEvent);
+
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 

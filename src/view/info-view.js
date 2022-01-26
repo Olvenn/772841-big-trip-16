@@ -1,5 +1,6 @@
 import AbstractView from './abstract-view.js';
-import {getArrayWithDots, sortByDay} from '../utils/common.js';
+import {getArrayWithDots} from '../utils/common.js';
+import {sortByDay} from '../utils/sort.js';
 import dayjs from 'dayjs';
 
 const createInfoTemplate = (citys, dates, price) => (
@@ -52,7 +53,7 @@ export default class InfoView extends AbstractView {
 
     #cityNames = () => {
 
-      const pointsDestinationName = this.#points.map((it) => it.destination.name);
+      const pointsDestinationName = this.#points.map((point) => point.destination.name);
 
       const pointsLength = this.#points.length;
 

@@ -60,7 +60,6 @@ export default class PointsModel extends AbstractObservable {
     }
   };
 
-
   addPoint = async (updateType, update) => {
     try {
       const response = await this.#apiService.addPoint(update);
@@ -77,7 +76,6 @@ export default class PointsModel extends AbstractObservable {
 
   deletePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
-    // console.log(index);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting point');
@@ -114,4 +112,3 @@ export default class PointsModel extends AbstractObservable {
     return adaptedPoint;
   }
 }
-

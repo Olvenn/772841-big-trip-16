@@ -3,6 +3,7 @@ import {MenuItem} from './consts.js';
 import ContolView from './view/control-view.js';
 
 import {render, RenderPosition, remove} from './utils/render.js';
+
 import PointsModel from './model/points-model.js';
 
 import FilterModel from './model/filter-model.js';
@@ -27,7 +28,9 @@ const newPointBtn = document.querySelector('.trip-main__event-add-btn');
 const mainElement = document.querySelector('.trip-events');
 
 const siteMenuComponent = new ContolView();
+
 let statisticsComponent = null;
+
 
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 
@@ -40,31 +43,34 @@ tripPresenter.init();
 const filterPresenter = new FilterPresenter(filterElement, filterModel, pointsModel);
 filterPresenter.init();
 
-newPointBtn.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createPointEvent();
-});
-
 const citeMenuClickHandle = (menuOptionName) => {
 
   switch (menuOptionName) {
+    case MenuItem.newPoint:
+      remove(statisticsComponent);
+      tripPresenter.destroy();
+      tripPresenter.init();
+      filterPresenter.destroy();
+      filterPresenter.init();
+      tripPresenter.createPointEvent();
+      newPointBtn.disabled = true;
+      break;
     case MenuItem.TABLE:
       tripPresenter.destroy();
       tripPresenter.init();
       filterPresenter.destroy();
       filterPresenter.init();
       remove(statisticsComponent);
+      newPointBtn.disabled = false;
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
       filterPresenter.destroy();
-
       statisticsComponent = new StatsView(pointsModel.points);
-      mainElement.innerHTML = '';
       render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
+      newPointBtn.disabled = true;
       break;
   }
-
 };
 
 pointsModel.init().finally(() => {
@@ -73,3 +79,12 @@ pointsModel.init().finally(() => {
   siteMenuComponent.setMenuClickHandler(citeMenuClickHandle);
 });
 
+
+newPointBtn.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  document.addEventListener('keydown', () => {
+  });
+
+  citeMenuClickHandle(MenuItem.newPoint);
+
+});

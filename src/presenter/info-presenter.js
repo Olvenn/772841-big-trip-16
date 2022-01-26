@@ -20,7 +20,6 @@ export default class InfoPresenter {
 
     this.#infoComponent = new InfoView(this.#pointsModel.points);
 
-
     if (!points.length && prevInfoComponent === null) {
       return;
     }

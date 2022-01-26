@@ -1,18 +1,8 @@
+import {UserAction, UpdateType, Mode, State} from '../consts.js';
+import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import PointView from '../view/point-view.js';
 import EditView from '../view/edit-view';
-import {render, RenderPosition, replace, remove} from '../utils/render.js';
-import {UserAction, UpdateType} from '../consts.js';
 
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
-
-export const State = {
-  SAVING: 'SAVING',
-  DELETING: 'DELETING',
-  ABORTING: 'ABORTING',
-};
 
 export default class PointPresenter {
   #tripContainer = null;
@@ -41,9 +31,9 @@ export default class PointPresenter {
     this.#pointEditComponent = new EditView(point, destination, offers);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
-    this.#pointEditComponent.setCloseFormHandler(this.#handleCloseFormClick);
-
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+
+    this.#pointEditComponent.setCloseFormHandler(this.#handleCloseFormClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
@@ -129,8 +119,10 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
+
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   }

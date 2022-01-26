@@ -1,16 +1,16 @@
 import SmartView from './smart-view.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
+import {createDataForStatistic} from '../utils/statistic';
+import {getTimeFormatted} from '../utils/common.js';
 
 const BAR_HEIGHT = 55;
-
 
 const createStatsTemplate = () => (
   `<section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
           <!-- Пример диаграмм -->
-          <img src="img/big-trip-stats-markup.png" alt="Пример диаграмм">
+          <!-- <img src="img/big-trip-stats-markup.png" alt="Пример диаграмм"> -->
 
           <div class="statistics__item">
             <canvas class="statistics__chart" id="money" width="900"></canvas>
@@ -28,30 +28,18 @@ const createStatsTemplate = () => (
 );
 
 const renderMoneyChart = (moneyCtx, allPoints) => {
+
   moneyCtx.height = BAR_HEIGHT * 5;
 
-  const getTypesListWith0 = (points) => {
-    const list = new Map();
-    points.map((event) => list.set(event.typeEvent, 0));
-    return list;
-  };
-
-  const dataForMoneyEmpty = Object.fromEntries(getTypesListWith0(allPoints));
-
-  const dataForMoney = allPoints.reduce((res, it) => {
-    const typeEvent = it.typeEvent;
-    const basePrice = it.basePrice;
-    res[typeEvent] += basePrice;
-    return res;
-  }, dataForMoneyEmpty);
+  const dataForMoneySorted = createDataForStatistic(allPoints, 'price');
 
   const  moneyChart = new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: Object.keys(dataForMoney),
+      labels: Object.keys(dataForMoneySorted),
       datasets: [{
-        data: Object.values(dataForMoney),
+        data: Object.values(dataForMoneySorted),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -69,7 +57,7 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          // formatter: (val) => '€ ${val}',
+          formatter: (data) => `€ ${data}`,
         },
       },
       title: {
@@ -116,16 +104,19 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
 };
 
 
-const renderTypeChart = (typeCtx) => {
+const renderTypeChart = (typeCtx, allPoints) => {
+
   typeCtx.height = BAR_HEIGHT * 5;
+
+  const dataForMoneySorted = createDataForStatistic(allPoints);
 
   const typeChart = new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'FLIGHT', 'DRIVE'],
+      labels: Object.keys(dataForMoneySorted),
       datasets: [{
-        data: [4, 3, 2, 1, 1, 1],
+        data: Object.values(dataForMoneySorted),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -143,7 +134,7 @@ const renderTypeChart = (typeCtx) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          // formatter: (val) => '${val}x',
+          formatter:  (data) => `${data}`,
         },
       },
       title: {
@@ -188,17 +179,19 @@ const renderTypeChart = (typeCtx) => {
   return typeChart;
 };
 
-const renderTimeChart = (typeCtx) => {
+const renderTimeChart = (typeCtx, allPoints) => {
 
   typeCtx.height = BAR_HEIGHT * 5;
+
+  const dataForMoneySorted = createDataForStatistic(allPoints, 'time');
 
   const timeChart = new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'FLIGHT', 'DRIVE'],
+      labels:  Object.keys(dataForMoneySorted),
       datasets: [{
-        data: [4, 3, 2, 1, 1, 1],
+        data: Object.values(dataForMoneySorted),
         backgroundColor: '#ffffff',
         hoverBackgroundColor: '#ffffff',
         anchor: 'start',
@@ -216,12 +209,12 @@ const renderTimeChart = (typeCtx) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          // formatter: (val) => '${val}x',
+          formatter:  (data) => `${getTimeFormatted(data)}`,
         },
       },
       title: {
         display: true,
-        text: 'TYPE',
+        text: 'TIME',
         fontColor: '#000000',
         fontSize: 23,
         position: 'left',
@@ -310,7 +303,7 @@ export default class StatsView extends SmartView  {
     const timeCtx = this.element.querySelector('#time');
 
     this.#moneyChart = renderMoneyChart(moneyCtx, this._data);
-    this.#typeChart = renderTypeChart(typeCtx);
-    this.#timeChart = renderTimeChart(timeCtx);
+    this.#typeChart = renderTypeChart(typeCtx, this._data);
+    this.#timeChart = renderTimeChart(timeCtx, this._data);
   }
 }
