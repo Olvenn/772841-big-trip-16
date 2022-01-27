@@ -1,21 +1,13 @@
 import {MenuItem} from './consts.js';
-
-import ContolView from './view/control-view.js';
-
 import {render, RenderPosition, remove} from './utils/render.js';
 
 import PointsModel from './model/points-model.js';
-
 import FilterModel from './model/filter-model.js';
-
 import TripPresenter from './presenter/trip-presenter.js';
-
 import FilterPresenter from './presenter/filter-presenter.js';
-
 import InfoPresenter from './presenter/info-presenter.js';
-
 import StatsView from './view/stats-view';
-
+import ContolView from './view/control-view.js';
 import ApiService from './api-service.js';
 
 const AUTHORIZATION = 'Basic 1q2w3e4r5t';
@@ -31,7 +23,6 @@ const siteMenuComponent = new ContolView();
 
 let statisticsComponent = null;
 
-
 const pointsModel = new PointsModel(new ApiService(END_POINT, AUTHORIZATION));
 
 const infoPresenter = new InfoPresenter(tripMainElement, pointsModel);
@@ -45,6 +36,9 @@ filterPresenter.init();
 
 const citeMenuClickHandle = (menuOptionName) => {
 
+  const tableTabElement = siteMenuComponent.element.querySelector(`[data-menu = "${MenuItem.TABLE}"]`);
+  const statsTabElement = siteMenuComponent.element.querySelector(`[data-menu = "${MenuItem.STATS}"]`);
+
   switch (menuOptionName) {
     case MenuItem.newPoint:
       remove(statisticsComponent);
@@ -54,6 +48,8 @@ const citeMenuClickHandle = (menuOptionName) => {
       filterPresenter.init();
       tripPresenter.createPointEvent();
       newPointBtn.disabled = true;
+      tableTabElement.classList.add('trip-tabs__btn--active');
+      statsTabElement.classList.remove('trip-tabs__btn--active');
       break;
     case MenuItem.TABLE:
       tripPresenter.destroy();
@@ -68,7 +64,7 @@ const citeMenuClickHandle = (menuOptionName) => {
       filterPresenter.destroy();
       statisticsComponent = new StatsView(pointsModel.points);
       render(mainElement, statisticsComponent, RenderPosition.BEFOREEND);
-      newPointBtn.disabled = true;
+      newPointBtn.disabled = false;
       break;
   }
 };
