@@ -39,7 +39,7 @@ export const EventTypes = [
 export const MenuItem = {
   NEW_EVENT: 'newPoint',
   TABLE: 'Table',
-  STATS: 'Stats'
+  STATS: 'Stats',
 };
 
 export const SortType = {
@@ -47,7 +47,7 @@ export const SortType = {
   EVENT: 'EVENT',
   TIME: 'TIME',
   PRICE: 'PRICE',
-  OFFER: 'OFFER'
+  OFFER: 'OFFER',
 };
 
 export const SortSetting = [
