@@ -1,13 +1,11 @@
-import EditView from '../view/edit-view';
-
-import {render, RenderPosition, remove} from '../utils/render.js';
 import {UserAction, UpdateType} from '../consts.js';
+import {render, RenderPosition, remove} from '../utils/render.js';
+import EditView from '../view/edit-view';
 
 export default class NewPointPresenter {
   #tripContainer = null;
   #changeData = null;
   #pointEditComponent = null;
-
 
   constructor(tripContainer, changeData) {
     this.#tripContainer = tripContainer;
@@ -22,17 +20,16 @@ export default class NewPointPresenter {
     if (this.#pointEditComponent !== null) {
       return;
     }
-    this.#pointEditComponent = new EditView(point, destination, offers);
 
+    this.#pointEditComponent = new EditView(point, destination, offers);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
     this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
 
-    //Нужно ли устанавливать     this.#tripEventEditorComponent.setDatePickers();
-    render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
 
-    document.addEventListener('keydown', this.escKeydownHandler);
+    render(this.#tripContainer, this.#pointEditComponent, RenderPosition.AFTERBEGIN);
   }
 
   destroy = () => {
@@ -45,8 +42,8 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
-
   #escKeyDownHandler = (evt) => {
+
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
@@ -55,6 +52,7 @@ export default class NewPointPresenter {
 
   #handleDeleteClick = () => {
     this.destroy();
+    this.#setAddButtonBlock(false);
   };
 
   setSaving = () => {
@@ -65,6 +63,7 @@ export default class NewPointPresenter {
   }
 
   setAborting = () => {
+    this.#setAddButtonBlock(false);
     const resetFormState = () => {
       this.#pointEditComponent.updateData({
         isDisabled: false,
@@ -76,7 +75,12 @@ export default class NewPointPresenter {
     this.#pointEditComponent.shake(resetFormState);
   }
 
+  #setAddButtonBlock = (isDisabled) => {
+    document.querySelector('.trip-main__event-add-btn').disabled = isDisabled;
+  }
+
   #handleFormSubmit = (point) => {
+    this.#setAddButtonBlock(false);
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,

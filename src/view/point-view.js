@@ -1,7 +1,6 @@
 import AbstractView from './abstract-view.js';
-import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
+import {humanizeEventData, humanizeEventTime, getTimeDifference} from '../utils/common.js';
 import dayjs from 'dayjs';
-
 
 const createEventOfferTemplate = (offer) => (
   `<li class="event__offer">
@@ -17,14 +16,6 @@ const createEventTemplate = (point) => {
   const startTime = dayjs(dateFrom);
   const endTime = dayjs(dateTo);
 
-  const getTimeDifference = () => {
-    const timeDifference = endTime.diff(startTime, 'minutes');
-    const minutesDifference = timeDifference % 60 > 0 ? `${timeDifference % 60}M` : '';
-    const hoursDifference = Math.floor(timeDifference / 60) % 24 > 0 ? `${Math.floor(timeDifference / 60) % 24}H ` : '';
-    const daysDifference = Math.floor((timeDifference / 60) / 24) > 0 ? `${Math.floor((timeDifference / 60) / 24)}D ` : '';
-    return daysDifference + hoursDifference + minutesDifference;
-  };
-
   const favoriteClassName = isFavorite
     ? ' event__favorite-btn--active'
     : '';
@@ -35,14 +26,14 @@ const createEventTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${typeEvent}.png" alt="${typeEvent} icon">
         </div>
-        <h3 class="event__title">${firstToUpperCase(typeEvent)} ${destination.name}</h3>
+        <h3 class="event__title">${typeEvent} ${destination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-18T10:30">${humanizeEventTime(dateFrom)}</time>
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${getTimeDifference()}</p>
+          <p class="event__duration">${getTimeDifference(startTime, endTime)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -67,7 +58,6 @@ const createEventTemplate = (point) => {
       </div>
   </li>`;
 };
-
 
 export default class PointView extends AbstractView {
   #element = null;

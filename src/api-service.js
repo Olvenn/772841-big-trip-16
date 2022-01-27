@@ -82,7 +82,6 @@ export default class ApiService {
     return response;
   }
 
-
   static parseResponse = (response) => response.json();
 
   #adaptToServer = (point) => {

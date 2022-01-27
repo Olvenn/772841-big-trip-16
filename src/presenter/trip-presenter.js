@@ -1,17 +1,14 @@
+import {UserAction, UpdateType, FilterType, SortType, BLANK_POINT, State as tripState}  from '../consts.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
-import {sortByDay, sortByPrice, sortByDuration} from '../utils/common.js';
-import {SortType} from '../consts.js';
+import {sortByDay, sortByPrice, sortByDuration} from '../utils/sort.js';
 import SortView from '../view/sort-view.js';
 import CoverPointsView from '../view/cover-points-view.js';
 import EmptyView from '../view/empty-view';
-import {UserAction, UpdateType, FilterType} from '../consts.js';
 import {filter} from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
-import {BLANK_POINT} from '../consts.js';
-
-
-import PointPresenter,  {State as tripState} from './point-presenter.js';
+import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
+
 
 export default class TripPresenter {
   #tripContainer = null;
@@ -20,7 +17,6 @@ export default class TripPresenter {
   #newPointPresenter = null;
   #sortComponent = null;
   #filterModel = null;
-
 
   #pointPresenter = new Map();
   #coverPointsComponent = new CoverPointsView();
@@ -34,7 +30,7 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-
+    this.#sortComponent = new SortView(this.#currentSortType);
     this.#newPointPresenter = new NewPointPresenter(this.#coverPointsComponent, this.#handleViewAction);
   }
 
@@ -63,6 +59,9 @@ export default class TripPresenter {
     this.#renderCoverPoints();
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   #handleModeChange = () => {
@@ -86,12 +85,10 @@ export default class TripPresenter {
 
       case UserAction.ADD_POINT:
         this.#newPointPresenter.setSaving();
-        // this.#pointsModel.addPoint(updateType, update);
 
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
-          this.#newPointPresenter.getDisabledAddBtn(true);
           this.#pointsModel.setAborting();
         }
 
@@ -107,10 +104,8 @@ export default class TripPresenter {
         }
 
         break;
-
     }
   }
-
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
@@ -133,9 +128,7 @@ export default class TripPresenter {
     }
   }
 
-
   createPointEvent = () => {
-    this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init(BLANK_POINT, this.#pointsModel.destination, this.#pointsModel.offers);
   }
@@ -152,7 +145,6 @@ export default class TripPresenter {
   }
 
   #renderSort = () => {
-    this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     render(this.#tripContainer, this.#sortComponent, RenderPosition.AFTERBEGIN);
   }
@@ -161,6 +153,7 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter(this.#coverPointsComponent, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point, this.#pointsModel.destination, this.#pointsModel.offers);
     this.#pointPresenter.set(point.id, pointPresenter);
+
   }
 
   #renderPoints = () => {
@@ -177,7 +170,9 @@ export default class TripPresenter {
     render(this.#coverPointsComponent, this.#noPointsComponent, RenderPosition.AFTERBEGIN);
   }
 
+
   #clearAll = (resetSortType = false) => {
+
     this.#newPointPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
@@ -195,14 +190,15 @@ export default class TripPresenter {
   }
 
   destroy = () => {
+
     this.#clearAll(true);
 
     remove(this.#coverPointsComponent);
+    remove(this.#sortComponent);
 
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
   }
-
 
   #renderCoverPoints = () => {
     if (this.#isLoading) {

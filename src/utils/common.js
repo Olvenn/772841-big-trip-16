@@ -1,6 +1,15 @@
 import dayjs from 'dayjs';
 
+export const firstToUpperCase = (str) => {
+  if (!str) {
+    return;
+  }
+  return str[0].toUpperCase() + str.slice(1);
+};
+
 export const humanizeEventData = (date) => dayjs(date).format('MMM D');
+
+export const humanizeEventTime = (date) => dayjs(date).format('hh:mm');
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -9,12 +18,21 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const sortByDay = (pointA, pointB) => dayjs(pointA.dateFrom) - dayjs(pointB.dateFrom);
+export const timeDifference = (timeStart, timeEnd) => dayjs(timeStart).diff(dayjs(timeEnd));
 
-export const sortByPrice = (pointA, pointB) => (pointB.basePrice - pointA.basePrice);
+const addZeroToNumber = (number) => (number < 10) ? `0${number}` : number;
 
-export const sortByDuration = (pointA, pointB) =>
-  dayjs(pointA.dateFrom).diff(dayjs(pointA.dateTo)) - dayjs(pointB.dateFrom).diff(dayjs(pointB.dateTo));
+export const getTimeFormatted = (timeDuration) => {
+  const minutesDifference = timeDuration % 60 > 0 ? `${addZeroToNumber(timeDuration % 60)}M` : ' 00M';
+  const hoursDifference = Math.floor(timeDuration / 60) % 24 > 0 ? `${addZeroToNumber(Math.floor(timeDuration / 60) % 24)}H ` : '00M ';
+  const daysDifference = Math.floor((timeDuration / 60) / 24) > 0 ? `${addZeroToNumber(Math.floor((timeDuration / 60) / 24))}D ` : '';
+  return daysDifference + hoursDifference + minutesDifference;
+};
+
+export const getTimeDifference = (timeStart, timeEnd) => {
+  const timeDuration = timeEnd.diff(timeStart, 'minutes');
+  return getTimeFormatted(timeDuration);
+};
 
 export const getArrayWithDots = (points, pointsLength) => {
   let elements = '';
@@ -25,4 +43,3 @@ export const getArrayWithDots = (points, pointsLength) => {
   }
   return elements;
 };
-

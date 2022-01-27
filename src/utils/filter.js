@@ -1,8 +1,7 @@
 import {FilterType} from '../consts.js';
 import dayjs from 'dayjs';
 
-const DAY_START = dayjs().add(3, 'day');
-
+const DAY_START = dayjs();
 
 const isFuturePoints = (point) => DAY_START.isBefore(point.dateFrom);
 const isPastPoints = (point) => DAY_START.isAfter(point.dateTo);

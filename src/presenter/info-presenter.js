@@ -15,12 +15,10 @@ export default class InfoPresenter {
 
   init = () => {
     const points = this.#pointsModel.points;
-    // console.log('info-presenter', this.#pointsModel.points);
 
     const prevInfoComponent = this.#infoComponent;
 
     this.#infoComponent = new InfoView(this.#pointsModel.points);
-
 
     if (!points.length && prevInfoComponent === null) {
       return;
@@ -31,8 +29,6 @@ export default class InfoPresenter {
       this.#infoComponent = null;
       return;
     }
-    // const infoData = this.#createInfoData(points);
-
 
     if (prevInfoComponent === null) {
       render(this.#infoContaner, this.#infoComponent, RenderPosition.AFTERBEGIN);
@@ -46,7 +42,4 @@ export default class InfoPresenter {
   #infoModelHendler = () => {
     this.init();
   }
-
-
 }
-

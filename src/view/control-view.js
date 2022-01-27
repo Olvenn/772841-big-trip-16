@@ -22,6 +22,7 @@ export default class ContolView extends AbstractView {
     evt.preventDefault();
     this._callback.menuClick(evt.target.dataset.menu);
 
+
     if (!evt.target.classList.contains('trip-tabs__btn--active')) {
       const prevActiveMenuOption = this.element.querySelector('.trip-tabs__btn--active');
 
@@ -36,4 +37,3 @@ export default class ContolView extends AbstractView {
     this.element.addEventListener('click', this.#menuClickHandler);
   }
 }
-
