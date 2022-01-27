@@ -25,15 +25,15 @@ export const UpdateType = {
 
 
 export const EventTypes = [
-  {name: 'taxi', iconURL: 'img/icons/taxi.png'},
-  {name: 'bus', iconURL: 'img/icons/bus.png'},
-  {name: 'train', iconURL: 'img/icons/train.png'},
-  {name: 'ship', iconURL: 'img/icons/ship.png'},
-  {name: 'drive', iconURL: 'img/icons/drive.png'},
-  {name: 'flight', iconURL: 'img/icons/flight.png'},
-  {name: 'check-in', iconURL: 'img/icons/check-in.png'},
-  {name: 'sightseeing', iconURL: 'img/icons/sightseeing.png'},
-  {name: 'restaurant', iconURL: 'img/icons/restaurant.png'},
+  {name: 'taxi'},
+  {name: 'bus'},
+  {name: 'train'},
+  {name: 'ship'},
+  {name: 'drive'},
+  {name: 'flight'},
+  {name: 'check-in'},
+  {name: 'sightseeing'},
+  {name: 'restaurant'},
 ];
 
 export const MenuItem = {
