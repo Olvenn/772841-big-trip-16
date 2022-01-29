@@ -256,7 +256,7 @@ export default class EditView extends SmartView {
     } else {
       const saveButtonElement = this.element.querySelector('.event__save-btn');
       const cityInputElement = this.element.querySelector('.event__input--destination');
-      cityInputElement.style.color = 'rgb(178, 34, 34)';
+      cityInputElement.style.color = 'rgb(178, 35, 35)';
       cityInputElement.setCustomValidity('Please, change destination from list.');
       cityInputElement.reportValidity();
       saveButtonElement.disabled = true;
@@ -272,7 +272,7 @@ export default class EditView extends SmartView {
     } else {
       const saveButtonElement = this.element.querySelector('.event__save-btn');
       const cityInputElement = this.element.querySelector('.event__input--price');
-      cityInputElement.style.color = 'rgb(178, 34, 34)';
+      cityInputElement.style.color = 'rgb(178, 35, 35)';
       cityInputElement.setCustomValidity('Enter an amount greater than 0.');
       cityInputElement.reportValidity();
       saveButtonElement.disabled = true;
