@@ -1,42 +1,27 @@
+import {FilterType} from '../consts.js';
+import {firstToUpperCase} from '../moki/utils.js';
 import AbstractView from './abstract-view.js';
 
-const createTripFilterItem = (filter, currentFilterType) => (
+const createFilterTemplate = (filter) => (
   `<div class="trip-filters__filter">
-    <input id="filter-${filter.name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter"
-      value="${filter.name}" ${filter.type === currentFilterType ? 'checked' : ''}>
-    <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name}</label>
-  </div>`
+                  <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
+                  <label class="trip-filters__filter-label" for="filter-everything">${firstToUpperCase(filter)}</label>
+                </div>`
 );
 
-const createFiltersTemplate = (filterItems, currentFilterType) => (
+const createFiltersTemplate = () => (
   `<form class="trip-filters" action="#" method="get">
-    ${filterItems.map((filter) => createTripFilterItem(filter, currentFilterType)).join('')}
-    <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`
+                ${Object.values(FilterType).map((it) => createFilterTemplate(it)).join('\n')}
+
+                <button class="visually-hidden" type="submit">Accept filter</button>
+              </form>`
 );
 
 export default class FilterView extends AbstractView {
-  #element = null;
-  #filters = null;
-  #currentFilter = null;
 
-  constructor(filters, currentFilter) {
-    super();
-    this.#filters = filters;
-    this.#currentFilter = currentFilter;
-  }
+  #filters = null;
 
   get template() {
-    return createFiltersTemplate(this.#filters, this.#currentFilter);
-  }
-
-  setFilterTypeChangeHandler = (callback) => {
-    this._callback.filterTypeChange = callback;
-    this.element.addEventListener('change', this.#filterTypeChangeHandler);
-  }
-
-  #filterTypeChangeHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value.toUpperCase());
+    return createFiltersTemplate(this.#filters);
   }
 }

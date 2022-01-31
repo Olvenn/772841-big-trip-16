@@ -1,5 +1,5 @@
-import AbstractView from './abstract-view.js';
-import {humanizeEventData, firstToUpperCase, humanizeEventTime, humanizeEventDuration} from '../moki/utils.js';
+import {createElement} from '../render.js';
+import {humanizeEventData, firstToUpperCase, humanizeEventTime} from '../moki/utils.js';
 
 const createEventOfferTemplate = (offer) => {
   const {name, price} = offer;
@@ -11,8 +11,8 @@ const createEventOfferTemplate = (offer) => {
                        </li>`;
 };
 
-const createEventTemplate = (point) => {
-  const {offers, typeEvent, destination, basePrice, dateFrom, dateTo, duration, isFavorite} = point;
+const createEventTemplate = (event) => {
+  const {offers, typeEvent, destination, basePrice, dateFrom, dateTo, duration, isFavorite} = event;
 
   const favoriteClassName = isFavorite
     ? ' event__favorite-btn--active'
@@ -31,7 +31,7 @@ const createEventTemplate = (point) => {
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T11:00">${humanizeEventTime(dateTo)}</time>
           </p>
-          <p class="event__duration">${humanizeEventDuration(duration)}</p>
+          <p class="event__duration">${duration}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
@@ -57,36 +57,28 @@ const createEventTemplate = (point) => {
   </li>`;
 };
 
-export default class PointView extends AbstractView {
 
+export default class PointView {
+  #element = null;
   #point = null;
 
   constructor(point) {
-    super();
     this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
   }
 
   get template() {
     return createEventTemplate(this.#point);
   }
 
-  setEditClickHandler = (callback) => {
-    this._callback.editClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
-  }
-
-  #editClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.editClick();
-  }
-
-  setFavoriteClickHandler = (callback) => {
-    this._callback.favoriteClick = callback;
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
-  }
-
-  #favoriteClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.favoriteClick();
+  removeElement() {
+    this.#element = null;
   }
 }
