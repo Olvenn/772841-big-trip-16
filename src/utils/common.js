@@ -11,13 +11,6 @@ export const humanizeEventData = (date) => dayjs(date).format('MMM D');
 
 export const humanizeEventTime = (date) => dayjs(date).format('hh:mm');
 
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
 export const timeDifference = (timeStart, timeEnd) => dayjs(timeStart).diff(dayjs(timeEnd));
 
 const addZeroToNumber = (number) => (number < 10) ? `0${number}` : number;

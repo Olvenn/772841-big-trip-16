@@ -60,7 +60,6 @@ const createEventTemplate = (point) => {
 };
 
 export default class PointView extends AbstractView {
-  #element = null;
   #point = null;
 
   constructor(point) {

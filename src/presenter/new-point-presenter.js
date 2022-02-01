@@ -13,9 +13,6 @@ export default class NewPointPresenter {
   }
 
   init = (point, destination, offers) => {
-    if(!point.destination) {
-      point.destination = destination[0];
-    }
 
     if (this.#pointEditComponent !== null) {
       return;
@@ -42,12 +39,14 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+
   #escKeyDownHandler = (evt) => {
 
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
     }
+    this.#setAddButtonBlock(false);
   }
 
   #handleDeleteClick = () => {

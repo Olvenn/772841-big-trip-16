@@ -3,7 +3,6 @@ import {render, RenderPosition, replace, remove} from '../utils/render.js';
 import PointView from '../view/point-view.js';
 import EditView from '../view/edit-view';
 
-
 export default class PointPresenter {
   #tripContainer = null;
   #changeData = null;

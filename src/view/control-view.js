@@ -8,7 +8,7 @@ const createContolTemplate = () => (
                 </nav>`
 );
 
-export default class ContolView extends AbstractView {
+export default class ControlView extends AbstractView {
 
   constructor() {
     super();

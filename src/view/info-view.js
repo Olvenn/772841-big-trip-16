@@ -27,10 +27,10 @@ export default class InfoView extends AbstractView {
 
   get template() {
 
-    return createInfoTemplate(this.#cityNames, this.#StartEndDates, this.#totalPrice);
+    return createInfoTemplate(this.#createcityNames, this.#createStartEndDates, this.#createtotalPrice);
   }
 
-  #StartEndDates = () => {
+  #createStartEndDates = () => {
     const points = this.#points;
 
     const startDate = dayjs(points[0].dateFrom).format('MMM D');
@@ -39,7 +39,7 @@ export default class InfoView extends AbstractView {
     return `${startDate}&nbsp;&mdash;&nbsp${finishDate}`;
   }
 
-  #totalPrice = () => {
+  #createtotalPrice = () => {
     const points = this.#points;
 
     const totalOffersPrice = points.map((point) => point.offers.map((offer) => offer.price)).reduce((res, it) =>  res.concat(it), []).reduce((sum, price) => sum + price, 0);
@@ -51,7 +51,7 @@ export default class InfoView extends AbstractView {
     return totalPrice;
   }
 
-    #cityNames = () => {
+    #createcityNames = () => {
 
       const pointsDestinationName = this.#points.map((point) => point.destination.name);
 

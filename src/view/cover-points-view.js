@@ -6,7 +6,6 @@ const createCoverPointsTemplate = () => (
 );
 
 export default class CoverPointsView extends AbstractView {
-  #element = null;
 
   get template() {
     return createCoverPointsTemplate();

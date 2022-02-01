@@ -9,7 +9,6 @@ import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 
-
 export default class TripPresenter {
   #tripContainer = null;
   #pointsModel = null;
@@ -30,14 +29,13 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-    this.#sortComponent = new SortView(this.#currentSortType);
+
     this.#newPointPresenter = new NewPointPresenter(this.#coverPointsComponent, this.#handleViewAction);
   }
 
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -60,8 +58,6 @@ export default class TripPresenter {
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   #handleModeChange = () => {
@@ -145,6 +141,7 @@ export default class TripPresenter {
   }
 
   #renderSort = () => {
+    this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     render(this.#tripContainer, this.#sortComponent, RenderPosition.AFTERBEGIN);
   }
@@ -153,7 +150,6 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter(this.#coverPointsComponent, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point, this.#pointsModel.destination, this.#pointsModel.offers);
     this.#pointPresenter.set(point.id, pointPresenter);
-
   }
 
   #renderPoints = () => {

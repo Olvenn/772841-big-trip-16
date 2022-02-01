@@ -1,3 +1,5 @@
+import {ColorStatistic} from '../consts.js';
+
 import SmartView from './smart-view.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -9,8 +11,6 @@ const BAR_HEIGHT = 55;
 const createStatsTemplate = () => (
   `<section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
-          <!-- Пример диаграмм -->
-          <!-- <img src="img/big-trip-stats-markup.png" alt="Пример диаграмм"> -->
 
           <div class="statistics__item">
             <canvas class="statistics__chart" id="money" width="900"></canvas>
@@ -29,9 +29,9 @@ const createStatsTemplate = () => (
 
 const renderMoneyChart = (moneyCtx, allPoints) => {
 
-  moneyCtx.height = BAR_HEIGHT * 5;
-
   const dataForMoneySorted = createDataForStatistic(allPoints, 'price');
+
+  moneyCtx.height = BAR_HEIGHT * Object.keys(dataForMoneySorted).length;
 
   const  moneyChart = new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -40,8 +40,8 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
       labels: Object.keys(dataForMoneySorted),
       datasets: [{
         data: Object.values(dataForMoneySorted),
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
+        backgroundColor:  ColorStatistic.BACKGROUND,
+        hoverBackgroundColor:  ColorStatistic.BACKGROUND,
         anchor: 'start',
         barThickness: 44,
         minBarLength: 50,
@@ -54,7 +54,7 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
           font: {
             size: 13,
           },
-          color: '#000000',
+          color: ColorStatistic.COLOR,
           anchor: 'end',
           align: 'start',
           formatter: (data) => `€ ${data}`,
@@ -63,14 +63,14 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
       title: {
         display: true,
         text: 'MONEY',
-        fontColor: '#000000',
+        fontColor: ColorStatistic.FONT,
         fontSize: 23,
         position: 'left',
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
+            fontColor: ColorStatistic.FONT,
             padding: 5,
             fontSize: 13,
           },
@@ -106,9 +106,9 @@ const renderMoneyChart = (moneyCtx, allPoints) => {
 
 const renderTypeChart = (typeCtx, allPoints) => {
 
-  typeCtx.height = BAR_HEIGHT * 5;
-
   const dataForMoneySorted = createDataForStatistic(allPoints);
+
+  typeCtx.height = BAR_HEIGHT * Object.keys(dataForMoneySorted).length;
 
   const typeChart = new Chart(typeCtx, {
     plugins: [ChartDataLabels],
@@ -117,8 +117,8 @@ const renderTypeChart = (typeCtx, allPoints) => {
       labels: Object.keys(dataForMoneySorted),
       datasets: [{
         data: Object.values(dataForMoneySorted),
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
+        backgroundColor:  ColorStatistic.BACKGROUND,
+        hoverBackgroundColor:  ColorStatistic.BACKGROUND,
         anchor: 'start',
         barThickness: 44,
         minBarLength: 50,
@@ -131,7 +131,7 @@ const renderTypeChart = (typeCtx, allPoints) => {
           font: {
             size: 13,
           },
-          color: '#000000',
+          color: ColorStatistic.COLOR,
           anchor: 'end',
           align: 'start',
           formatter:  (data) => `${data}`,
@@ -140,14 +140,14 @@ const renderTypeChart = (typeCtx, allPoints) => {
       title: {
         display: true,
         text: 'TYPE',
-        fontColor: '#000000',
+        fontColor: ColorStatistic.FONT,
         fontSize: 23,
         position: 'left',
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
+            fontColor: ColorStatistic.FONT,
             padding: 5,
             fontSize: 13,
           },
@@ -181,9 +181,9 @@ const renderTypeChart = (typeCtx, allPoints) => {
 
 const renderTimeChart = (typeCtx, allPoints) => {
 
-  typeCtx.height = BAR_HEIGHT * 5;
-
   const dataForMoneySorted = createDataForStatistic(allPoints, 'time');
+
+  typeCtx.height = BAR_HEIGHT * Object.keys(dataForMoneySorted).length;
 
   const timeChart = new Chart(typeCtx, {
     plugins: [ChartDataLabels],
@@ -192,8 +192,8 @@ const renderTimeChart = (typeCtx, allPoints) => {
       labels:  Object.keys(dataForMoneySorted),
       datasets: [{
         data: Object.values(dataForMoneySorted),
-        backgroundColor: '#ffffff',
-        hoverBackgroundColor: '#ffffff',
+        backgroundColor:  ColorStatistic.BACKGROUND,
+        hoverBackgroundColor:  ColorStatistic.BACKGROUND,
         anchor: 'start',
         barThickness: 44,
         minBarLength: 50,
@@ -206,7 +206,7 @@ const renderTimeChart = (typeCtx, allPoints) => {
           font: {
             size: 13,
           },
-          color: '#000000',
+          color: ColorStatistic.COLOR,
           anchor: 'end',
           align: 'start',
           formatter:  (data) => `${getTimeFormatted(data)}`,
@@ -215,14 +215,14 @@ const renderTimeChart = (typeCtx, allPoints) => {
       title: {
         display: true,
         text: 'TIME',
-        fontColor: '#000000',
+        fontColor: ColorStatistic.FONT,
         fontSize: 23,
         position: 'left',
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: '#000000',
+            fontColor: ColorStatistic.FONT,
             padding: 5,
             fontSize: 13,
           },

@@ -7,7 +7,7 @@ import TripPresenter from './presenter/trip-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import InfoPresenter from './presenter/info-presenter.js';
 import StatsView from './view/stats-view';
-import ContolView from './view/control-view.js';
+import ControlView from './view/control-view.js';
 import ApiService from './api-service.js';
 
 const AUTHORIZATION = 'Basic 1q2w3e4r5t';
@@ -19,7 +19,7 @@ const filterElement = document.querySelector('[data-view="filter"]');
 const newPointBtn = document.querySelector('.trip-main__event-add-btn');
 const mainElement = document.querySelector('.trip-events');
 
-const siteMenuComponent = new ContolView();
+const siteMenuComponent = new ControlView();
 
 let statisticsComponent = null;
 
@@ -40,7 +40,7 @@ const citeMenuClickHandle = (menuOptionName) => {
   const statsTabElement = siteMenuComponent.element.querySelector(`[data-menu = "${MenuItem.STATS}"]`);
 
   switch (menuOptionName) {
-    case MenuItem.newPoint:
+    case MenuItem.NEW_POINT:
       remove(statisticsComponent);
       tripPresenter.destroy();
       tripPresenter.init();
@@ -50,6 +50,7 @@ const citeMenuClickHandle = (menuOptionName) => {
       newPointBtn.disabled = true;
       tableTabElement.classList.add('trip-tabs__btn--active');
       statsTabElement.classList.remove('trip-tabs__btn--active');
+      tableTabElement.focus();
       break;
     case MenuItem.TABLE:
       tripPresenter.destroy();
@@ -78,9 +79,7 @@ pointsModel.init().finally(() => {
 
 newPointBtn.addEventListener('click', (evt) => {
   evt.preventDefault();
-  document.addEventListener('keydown', () => {
-  });
 
-  citeMenuClickHandle(MenuItem.newPoint);
+  citeMenuClickHandle(MenuItem.NEW_POINT);
 
 });

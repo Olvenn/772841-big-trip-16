@@ -24,20 +24,20 @@ export const UpdateType = {
 };
 
 
-export const EventTypes = [
-  {name: 'taxi'},
-  {name: 'bus'},
-  {name: 'train'},
-  {name: 'ship'},
-  {name: 'drive'},
-  {name: 'flight'},
-  {name: 'check-in'},
-  {name: 'sightseeing'},
-  {name: 'restaurant'},
+export const eventTypes = [
+  {id: 1, name: 'taxi'},
+  {id: 2, name: 'bus'},
+  {id: 3, name: 'train'},
+  {id: 4, name: 'ship'},
+  {id: 5, name: 'drive'},
+  {id: 6, name: 'flight'},
+  {id: 7, name: 'check-in'},
+  {id: 8, name: 'sightseeing'},
+  {id: 9, name: 'restaurant'},
 ];
 
 export const MenuItem = {
-  NEW_EVENT: 'newPoint',
+  NEW_POINT: 'newPoint',
   TABLE: 'Table',
   STATS: 'Stats',
 };
@@ -49,14 +49,6 @@ export const SortType = {
   PRICE: 'PRICE',
   OFFER: 'OFFER',
 };
-
-export const SortSetting = [
-  {name: 'day', dataSortType: 'DAY', disabled: false},
-  {name: 'event', dataSortType: 'EVENT', disabled: true},
-  {name: 'time', dataSortType: 'TIME', disabled: false},
-  {name: 'price', dataSortType: 'PRICE', disabled: false},
-  {name: 'offer', dataSortType: 'OFFER', disabled: true},
-];
 
 export const FilterType = {
   EVERYTHING: 'EVERYTHING',
@@ -74,3 +66,10 @@ export const State = {
   DELETING: 'DELETING',
   ABORTING: 'ABORTING',
 };
+
+export const ColorStatistic = {
+  BACKGROUND: '#ffffff',
+  FONT: '#000000',
+  COLOR: '#000000',
+};
+

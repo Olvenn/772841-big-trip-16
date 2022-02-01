@@ -1,4 +1,4 @@
-import {EventTypes, BLANK_POINT} from '../consts.js';
+import {eventTypes, BLANK_POINT} from '../consts.js';
 import {firstToUpperCase} from '../utils/common.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
@@ -37,11 +37,21 @@ const createOffersTemplate = (isDisabled, typeOffersList) => (
              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-
-            ${typeOffersList.map((Offer) => createOfferTemplate(Offer, isDisabled)).join('\n')}
-
+            ${typeOffersList.map((offer) => createOfferTemplate(offer, isDisabled)).join('\n')}
             </div>
             </section>`
+);
+
+const createDescriptionAndPicturesTemplate = (destination) => (
+  `<section class="event__section  event__section--destination">
+                      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                      <p class="event__destination-description">${destination.description}</p>
+                      <div class="event__photos-container">
+                        <div class="event__photos-tape">
+                          ${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`).join('')}
+                        </div>
+                      </div>
+                    </section>`
 );
 
 export const createEditTemplate = (point, destinations, offersList) => {
@@ -51,19 +61,18 @@ export const createEditTemplate = (point, destinations, offersList) => {
     isSaving,
     isDeleting,} = point;
 
+
   const cancelOrDelete = id ? 'Delete' : 'Cancel';
-  const getDestination = destination ? destination : destinations[0];
 
   const allOffersOneType  = offersList.find((offer) => offer.type ===  typeEvent).offers;
 
-  const idCheckedOffers = offers.filter((offer) => offer.isChecked).map((offer) => offer.id);
+  const idCheckedOffers = offers.map((offer) => offer.id);
 
   allOffersOneType.forEach((offer) => {
     offer.isChecked = (idCheckedOffers.indexOf(offer.id) !== -1);
   });
 
   const isSubmitDisabled = basePrice <= 0;
-
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -77,7 +86,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                       <div class="event__type-list">
                         <fieldset class="event__type-group">
                           <legend class="visually-hidden">Event type</legend>
-                            ${EventTypes.map((type) => createTypeTemplate(EventTypes.typeEvent, type, isDisabled)).join('\n')}
+                            ${eventTypes.map((type) => createTypeTemplate(eventTypes.typeEvent, type, isDisabled)).join('\n')}
                         </fieldset>
                       </div>
                     </div>
@@ -86,7 +95,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${typeEvent}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}  autocomplete="false" >
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? he.encode(destination.name) : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}  autocomplete="false" >
                     <datalist id="destination-list-1">
 
                       ${Object.values(destinations.map((oneDestination) => oneDestination.name)).map((name) => createDestinationTemplate(name)).join('\n')}
@@ -112,10 +121,8 @@ export const createEditTemplate = (point, destinations, offersList) => {
                     </div>
 
                     <button class="event__save-btn  btn  btn--blue" type="submit"
-                     ${isSubmitDisabled || isDisabled ? 'disabled' : ''}
-                    >${isSaving ? 'Saving...' : 'Save'}</button>
-                    <button class="event__reset-btn" type="reset" ${isDeleting ? 'Deleting...' : 'Delete'}
-                    >${cancelOrDelete}</button>
+                     ${isSubmitDisabled || isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+                    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : cancelOrDelete}</button>
                     <button class="event__rollup-btn" type="button">
                       <span class="visually-hidden">Open event</span>
                     </button>
@@ -123,16 +130,8 @@ export const createEditTemplate = (point, destinations, offersList) => {
 
                   ${allOffersOneType.length > 0 ? createOffersTemplate(isDisabled, allOffersOneType) : ''}
 
-                    <section class="event__section  event__section--destination">
-                      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                      <p class="event__destination-description">${getDestination.description}</p>
-                      <div class="event__photos-container">
-                      <div class="event__photos-tape">
-                        ${getDestination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`).join()}
-                      </div>
+                  ${destination ? createDescriptionAndPicturesTemplate(destination) : ''}
 
-                    </div>
-                  </section>
                     </section>
                   </section>
                 </form>
@@ -202,6 +201,7 @@ export default class EditView extends SmartView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
     this.element.querySelector('.event__field-group--destination').addEventListener('input', this.#onCityChange);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#onPriceInput);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#onPriceInput);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
     this.#setDatepicker();

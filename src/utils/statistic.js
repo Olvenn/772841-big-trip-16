@@ -28,8 +28,8 @@ export const createDataForStatistic = (allPoints, statisticType) => {
   }, dataForMoneyEmpty);
 
   const dataForMoneySorted = Object.entries(dataForMoneyNotSorted)
-    .sort(([ , type1],[ , type2]) => type1 - type2)
-    .reduce((res, [type, money]) => ({ ...res, [type]: money }), {});
+    .sort(([ , type1],[ , type2]) => type2 - type1)
+    .reduce((res, [type, money]) => ({ ...res, [type.toUpperCase()]: money }), {});
   return dataForMoneySorted;
 };
 
