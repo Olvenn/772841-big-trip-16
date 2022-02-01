@@ -61,6 +61,7 @@ export const createEditTemplate = (point, destinations, offersList) => {
     isSaving,
     isDeleting,} = point;
 
+
   const cancelOrDelete = id ? 'Delete' : 'Cancel';
 
   const allOffersOneType  = offersList.find((offer) => offer.type ===  typeEvent).offers;
@@ -200,6 +201,7 @@ export default class EditView extends SmartView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#onTypeChange);
     this.element.querySelector('.event__field-group--destination').addEventListener('input', this.#onCityChange);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#onPriceInput);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#onPriceInput);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => element.addEventListener('change', this.#offerChangeHandler));
     this.#setDatepicker();

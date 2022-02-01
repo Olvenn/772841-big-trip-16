@@ -50,6 +50,7 @@ const citeMenuClickHandle = (menuOptionName) => {
       newPointBtn.disabled = true;
       tableTabElement.classList.add('trip-tabs__btn--active');
       statsTabElement.classList.remove('trip-tabs__btn--active');
+      tableTabElement.focus();
       break;
     case MenuItem.TABLE:
       tripPresenter.destroy();
