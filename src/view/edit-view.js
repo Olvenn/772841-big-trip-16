@@ -319,16 +319,16 @@ export default class EditView extends SmartView {
     this.#setInnerHandlers();
     this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setCloseFormHandler(this._callback.closeEdit);
+    this.setCloseFormClickHandler(this._callback.closeEdit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
-  setCloseFormHandler = (callback) => {
+  setCloseFormClickHandler = (callback) => {
     this._callback.closeEdit = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#CloseFormClickHandler);
   }
 
-  #closeFormHandler = (evt) => {
+  #CloseFormClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.closeEdit(this._data);

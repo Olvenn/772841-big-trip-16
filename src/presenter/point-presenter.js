@@ -32,7 +32,7 @@ export default class PointPresenter {
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
-    this.#pointEditComponent.setCloseFormHandler(this.#handleCloseFormClick);
+    this.#pointEditComponent.setCloseFormClickHandler(this.#handleCloseFormClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 

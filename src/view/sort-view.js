@@ -35,6 +35,7 @@ export default class SortView extends AbstractView {
     this.#currentSortType = currentSortType;
   }
 
+
   get template() {
     return createSortTemplate(this.#currentSortType);
   }

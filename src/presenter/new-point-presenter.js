@@ -22,7 +22,7 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
-    this.#pointEditComponent.setCloseFormHandler(this.#handleDeleteClick);
+    this.#pointEditComponent.setCloseFormClickHandler(this.#handleDeleteClick);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
