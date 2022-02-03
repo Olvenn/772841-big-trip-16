@@ -107,6 +107,7 @@ export default class PointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#changeMode();
     this.#mode = Mode.EDITING;
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   #replaceFormToCard = () => {

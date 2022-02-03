@@ -248,10 +248,11 @@ export default class EditView extends SmartView {
     const destinationNew = this.#destinationsAll.find((destination) => destination.name === evt.target.value);
 
     if (destinationNew) {
-
+      const saveButtonElement = this.element.querySelector('.event__save-btn');
+      saveButtonElement.disabled = false;
       this.updateData({
         destination: destinationNew,
-      });
+      }, true);
 
     } else {
       const saveButtonElement = this.element.querySelector('.event__save-btn');
@@ -325,10 +326,10 @@ export default class EditView extends SmartView {
 
   setCloseFormClickHandler = (callback) => {
     this._callback.closeEdit = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#CloseFormClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormClickHandler);
   }
 
-  #CloseFormClickHandler = (evt) => {
+  #closeFormClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.closeEdit(this._data);
